@@ -36,6 +36,8 @@
 #include "ti_msp_dl_config.h"
 
 #define ADC_SAMPLE_SIZE 2048
+#define maxn(a, b) (a > b ? a : b)
+#define minn(a, b) (a < b ? a : b)
 
 float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
 float FFT_OUTPUT[ADC_SAMPLE_SIZE];
@@ -44,8 +46,10 @@ uint32_t FFT_OUTPUT_MAX_index = 0;
 
 uint16_t gADCSamples[ADC_SAMPLE_SIZE];
 volatile bool gCheckADC;
-
+float freq;
+float vpp;
 uint32_t adc_fs = 4e5;
+uint16_t point;
 
 void StartAdc(int freq) {
   DL_TimerA_stopCounter(TIMER_0_INST);
@@ -60,6 +64,53 @@ void StartAdc(int freq) {
     ;
   DL_TimerA_stopCounter(TIMER_0_INST);
   return;
+}
+
+int switchwave() {
+  uint16_t waveform = 0;
+  float k =
+      FFT_OUTPUT[FFT_OUTPUT_MAX_index] / FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index];
+  if (k < 9 && k > 1)
+    waveform = 2; // 方波
+  if (k < 20 && k > 9)
+    waveform = 3; // 三角波
+  if (k > 20)
+    waveform = 1; // 正弦波
+  return waveform;
+}
+
+float vppfft;
+
+float findvpp() {
+  StartAdc(adc_fs);
+  float ans = -1;
+  float e = 0.0;
+  float power = 0.0;
+  point = adc_fs / freq;
+  uint16_t i;
+  int multi = 3;
+  for (i = 0; i < point * multi; i++) {
+    e = e + ((powf((gADCSamples[i] * 3.3 / 4096 - vppfft / 2), 2) +
+              powf((gADCSamples[i + 1] * 3.3 / 4096 - vppfft / 2), 2)) /
+             adc_fs / 2);
+  }
+  __BKPT();
+  power = e * freq / multi;
+  int waveform = switchwave();
+  switch (waveform) {
+  case 1: // 正弦波
+    ans = 2 * sqrtf(2 * power);
+    break;
+  case 2: // 方波
+    ans = 2 * sqrtf(power);
+    break;
+  case 3: // 三角波
+    ans = 2 * sqrtf(3 * power);
+    break;
+  default:
+    break;
+  }
+  return ans;
 }
 
 void findbase() {
@@ -81,7 +132,7 @@ void findbase() {
 
   float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
   if (base_frequency <= 500) {
-    adc_fs = base_frequency * 10;
+    adc_fs = 5e3;
     // __BKPT();
     return;
   } else if (500 < base_frequency && base_frequency < 1e3) {
@@ -89,7 +140,7 @@ void findbase() {
     // __BKPT();
     return;
   } else if (base_frequency < 70e3) {
-    adc_fs = base_frequency * 60;
+    adc_fs = base_frequency * 20;
     // __BKPT();
     return;
   } else {
@@ -111,6 +162,68 @@ float findfreq() {
     FFT_INPUT[i * 2 + 1] = 0;
   }
 
+  int Vmax[5], Vmin[5];
+
+  // 初始化最大值数组为最小值
+  Vmax[0] = Vmax[1] = Vmax[2] = Vmax[3] = Vmax[4] = -1;
+  // 初始化最小值数组为最大值
+  Vmin[0] = Vmin[1] = Vmin[2] = Vmin[3] = Vmin[4] = 0xFFFF;
+
+  for (int i = 0; i < ADC_SAMPLE_SIZE; i++) {
+    uint16_t current = gADCSamples[i];
+
+    // 更新前五大最大值
+    if (current > Vmax[0]) {
+      Vmax[4] = Vmax[3];
+      Vmax[3] = Vmax[2];
+      Vmax[2] = Vmax[1];
+      Vmax[1] = Vmax[0];
+      Vmax[0] = current;
+    } else if (current > Vmax[1]) {
+      Vmax[4] = Vmax[3];
+      Vmax[3] = Vmax[2];
+      Vmax[2] = Vmax[1];
+      Vmax[1] = current;
+    } else if (current > Vmax[2]) {
+      Vmax[4] = Vmax[3];
+      Vmax[3] = Vmax[2];
+      Vmax[2] = current;
+    } else if (current > Vmax[3]) {
+      Vmax[4] = Vmax[3];
+      Vmax[3] = current;
+    } else if (current > Vmax[4]) {
+      Vmax[4] = current;
+    }
+
+    // 更新前五最小值
+    if (current < Vmin[0]) {
+      Vmin[4] = Vmin[3];
+      Vmin[3] = Vmin[2];
+      Vmin[2] = Vmin[1];
+      Vmin[1] = Vmin[0];
+      Vmin[0] = current;
+    } else if (current < Vmin[1]) {
+      Vmin[4] = Vmin[3];
+      Vmin[3] = Vmin[2];
+      Vmin[2] = Vmin[1];
+      Vmin[1] = current;
+    } else if (current < Vmin[2]) {
+      Vmin[4] = Vmin[3];
+      Vmin[3] = Vmin[2];
+      Vmin[2] = current;
+    } else if (current < Vmin[3]) {
+      Vmin[4] = Vmin[3];
+      Vmin[3] = current;
+    } else if (current < Vmin[4]) {
+      Vmin[4] = current;
+    }
+  }
+
+  // 计算峰峰值：使用第2~5大/小值平均，避免异常点干扰
+  float avg_max = (Vmax[0] + Vmax[4]) / 2.0f;
+  float avg_min = (Vmin[0] + Vmin[4]) / 2.0f;
+
+  vppfft = (avg_max - avg_min) * 3.3f / 4096.0f;
   arm_cfft_f32(&arm_cfft_sR_f32_len2048, FFT_INPUT, 0, 1);
   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
@@ -128,8 +241,7 @@ float findfreq() {
 int main(void) {
   SYSCFG_DL_init();
   DL_DMA_setSrcAddr(DMA, DMA_CH0_CHAN_ID,
-                    (uint32_t)DL_ADC12_getFIFOAddress(
-                        ADC12_0_INST)); // FIFO模式：降低DMA的使用频率
+                    (uint32_t)0x40556280); // FIFO模式：降低DMA的使用频率
   DL_DMA_setDestAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)&gADCSamples[0]);
   DL_DMA_enableChannel(DMA, DMA_CH0_CHAN_ID);
 
@@ -138,9 +250,14 @@ int main(void) {
   // DL_ADC12_startConversion(ADC12_0_INST);
 
   while (1) {
+    // findbase();
+    // freq = findfreq();
+    // vpp = findvpp();
+    int cntwa = 0;
     findbase();
-    float freq = findfreq();
-    int a = 10;
+    freq = findfreq();
+    vpp = findvpp();
+    __BKPT();
   }
 }
 
