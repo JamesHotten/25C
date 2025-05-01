@@ -55,6 +55,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_TIMER_0_init();
     SYSCFG_DL_ADC12_0_init();
     SYSCFG_DL_DMA_init();
+    SYSCFG_DL_SYSCTL_CLK_init();
     /* Ensure backup structures have no valid state */
 	gTIMER_0Backup.backupRdy 	= false;
 
@@ -118,6 +119,17 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
     DL_SYSCTL_setMCLKDivider(DL_SYSCTL_MCLK_DIVIDER_DISABLE);
 
 }
+SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_CLK_init(void) {
+    while ((DL_SYSCTL_getClockStatus() & (DL_SYSCTL_CLK_STATUS_LFOSC_GOOD))
+	       != (DL_SYSCTL_CLK_STATUS_LFOSC_GOOD))
+	{
+		/* Ensure that clocks are in default POR configuration before initialization.
+		* Additionally once LFXT is enabled, the internal LFOSC is disabled, and cannot
+		* be re-enabled other than by executing a BOOTRST. */
+		;
+	}
+}
+
 
 
 
@@ -138,7 +150,7 @@ static const DL_TimerA_ClockConfig gTIMER_0ClockConfig = {
  */
 static const DL_TimerA_TimerConfig gTIMER_0TimerConfig = {
     .period     = TIMER_0_INST_LOAD_VALUE,
-    .timerMode  = DL_TIMER_TIMER_MODE_ONE_SHOT,
+    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 
@@ -171,17 +183,17 @@ SYSCONFIG_WEAK void SYSCFG_DL_ADC12_0_init(void)
 {
     DL_ADC12_setClockConfig(ADC12_0_INST, (DL_ADC12_ClockConfig *) &gADC12_0ClockConfig);
     DL_ADC12_initSingleSample(ADC12_0_INST,
-        DL_ADC12_REPEAT_MODE_ENABLED, DL_ADC12_SAMPLING_SOURCE_AUTO, DL_ADC12_TRIG_SRC_SOFTWARE,
+        DL_ADC12_REPEAT_MODE_ENABLED, DL_ADC12_SAMPLING_SOURCE_AUTO, DL_ADC12_TRIG_SRC_EVENT,
         DL_ADC12_SAMP_CONV_RES_12_BIT, DL_ADC12_SAMP_CONV_DATA_FORMAT_UNSIGNED);
     DL_ADC12_configConversionMem(ADC12_0_INST, ADC12_0_ADCMEM_0,
         DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
-        DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
-    DL_ADC12_enableFIFO(ADC12_0_INST);
+        DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_TRIGGER_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
     DL_ADC12_setPowerDownMode(ADC12_0_INST,DL_ADC12_POWER_DOWN_MODE_MANUAL);
     DL_ADC12_setSampleTime0(ADC12_0_INST,32);
     DL_ADC12_enableDMA(ADC12_0_INST);
-    DL_ADC12_setDMASamplesCnt(ADC12_0_INST,6);
-    DL_ADC12_enableDMATrigger(ADC12_0_INST,(DL_ADC12_DMA_MEM10_RESULT_LOADED));
+    DL_ADC12_setDMASamplesCnt(ADC12_0_INST,1);
+    DL_ADC12_enableDMATrigger(ADC12_0_INST,(DL_ADC12_DMA_MEM0_RESULT_LOADED));
+    DL_ADC12_setSubscriberChanID(ADC12_0_INST,ADC12_0_INST_SUB_CH);
     /* Enable ADC12 interrupt */
     DL_ADC12_clearInterruptStatus(ADC12_0_INST,(DL_ADC12_INTERRUPT_DMA_DONE));
     DL_ADC12_enableInterrupt(ADC12_0_INST,(DL_ADC12_INTERRUPT_DMA_DONE));
@@ -193,15 +205,15 @@ static const DL_DMA_Config gDMA_CH0Config = {
     .extendedMode   = DL_DMA_NORMAL_MODE,
     .destIncrement  = DL_DMA_ADDR_INCREMENT,
     .srcIncrement   = DL_DMA_ADDR_UNCHANGED,
-    .destWidth      = DL_DMA_WIDTH_WORD,
-    .srcWidth       = DL_DMA_WIDTH_WORD,
+    .destWidth      = DL_DMA_WIDTH_HALF_WORD,
+    .srcWidth       = DL_DMA_WIDTH_HALF_WORD,
     .trigger        = ADC12_0_INST_DMA_TRIGGER,
     .triggerType    = DL_DMA_TRIGGER_TYPE_EXTERNAL,
 };
 
 SYSCONFIG_WEAK void SYSCFG_DL_DMA_CH0_init(void)
 {
-    DL_DMA_setTransferSize(DMA, DMA_CH0_CHAN_ID, 1024);
+    DL_DMA_setTransferSize(DMA, DMA_CH0_CHAN_ID, 2048);
     DL_DMA_initChannel(DMA, DMA_CH0_CHAN_ID , (DL_DMA_Config *) &gDMA_CH0Config);
 }
 SYSCONFIG_WEAK void SYSCFG_DL_DMA_init(void){

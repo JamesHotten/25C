@@ -16,6 +16,15 @@
                     }
                 }
             }
+        },
+        {
+            "name": "25C",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "25C",
+                "resourceId": "/25C"
+            }
         }
     ]
 }
