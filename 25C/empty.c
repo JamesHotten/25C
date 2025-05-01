@@ -33,9 +33,6 @@
 #include "arm_const_structs.h"
 #include "arm_math.h"
 #include "ti/driverlib/dl_adc12.h"
-// #include "ti/driverlib/dl_timer.h"
-// #include "ti/driverlib/dl_timera.h"
-// #include "ti/driverlib/dl_timerg.h"
 #include "ti_msp_dl_config.h"
 
 #define ADC_SAMPLE_SIZE 2048
@@ -51,19 +48,23 @@ volatile bool gCheckADC;
 uint32_t adc_fs = 4e5;
 
 void StartAdc(int freq) {
+  DL_TimerA_stopCounter(TIMER_0_INST);
   uint16_t sampletime = 32e6 / freq;
-  DL_ADC12_setSampleTime0(ADC12_0_INST, sampletime);
-  int check = DL_ADC12_getSampleTime0(ADC12_0_INST);
+  DL_TimerA_setLoadValue(TIMER_0_INST, sampletime);
+  int check = DL_TimerA_getLoadValue(TIMER_0_INST);
+  DL_TimerA_startCounter(TIMER_0_INST);
   gCheckADC = false;
-  DL_ADC12_enableConversions(ADC12_0_INST);
-  DL_ADC12_startConversion(ADC12_0_INST);
+  // DL_ADC12_enableConversions(ADC12_0_INST);
+  // DL_ADC12_startConversion(ADC12_0_INST);
   while (gCheckADC == false)
     ;
+  DL_TimerA_stopCounter(TIMER_0_INST);
   return;
 }
 
 void findbase() {
   adc_fs = 400e3;
+  StartAdc(adc_fs);
   StartAdc(adc_fs);
   uint16_t i;
   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
@@ -80,27 +81,30 @@ void findbase() {
 
   float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
   if (base_frequency <= 500) {
-    adc_fs = 5e3;
-    __BKPT();
+    adc_fs = base_frequency * 10;
+    // __BKPT();
     return;
   } else if (500 < base_frequency && base_frequency < 1e3) {
-    adc_fs = 10e3;
-    __BKPT();
+    adc_fs = base_frequency * 20;
+    // __BKPT();
     return;
-  } else if (base_frequency < 10e3) {
-    adc_fs = 100e3;
-    __BKPT();
+  } else if (base_frequency < 70e3) {
+    adc_fs = base_frequency * 60;
+    // __BKPT();
     return;
   } else {
     adc_fs = 400e3;
-    __BKPT();
+    // __BKPT();
     return;
   }
 }
 
 float findfreq() {
   StartAdc(adc_fs);
-  uint16_t check = DL_ADC12_getSampleTime0(ADC12_0_INST);
+  StartAdc(adc_fs);
+  StartAdc(adc_fs);
+  StartAdc(adc_fs);
+  uint16_t check = DL_TimerA_getLoadValue(TIMER_0_INST);
   uint16_t i;
   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
     FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
@@ -111,7 +115,7 @@ float findfreq() {
   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
   FFT_OUTPUT[0] = 0;
-  arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE, &FFT_OUTPUT_MAX,
+  arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE / 2, &FFT_OUTPUT_MAX,
               &FFT_OUTPUT_MAX_index);
   // FFT_OUTPUT[0] = 0;
   // arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE / 2, &FFT_OUTPUT_MAX,
@@ -131,7 +135,7 @@ int main(void) {
 
   /* Setup interrupts on device */
   NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-  DL_ADC12_startConversion(ADC12_0_INST);
+  // DL_ADC12_startConversion(ADC12_0_INST);
 
   while (1) {
     findbase();
@@ -143,7 +147,8 @@ int main(void) {
 void ADC12_0_INST_IRQHandler(void) {
   switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
   case DL_ADC12_IIDX_DMA_DONE:
-    DL_ADC12_disableConversions(ADC12_0_INST);
+    // DL_TimerA_disableClock(TIMER_0_INST);
+    // DL_ADC12_disableConversions(ADC12_0_INST);
     gCheckADC = true;
     break;
   default:
