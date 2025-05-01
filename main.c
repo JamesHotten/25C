@@ -1,68 +1,61 @@
-#include "arm_const_structs.h"
-#include "arm_math.h"
-#include "ti_msp_dl_config.h"
+#include "ti/driverlib/dl_adc12.h"
 
-#define NUM_SAMPLES 256
-#define ADC_SAMPLE_SIZE 1024
+extern uint32_t adc_fs;
 
-uint16_t gADCSamples[ADC_SAMPLE_SIZE];
-volatile bool gCheckADC;
+/**
+ * @brief 设置 ADC 采样率为目标频率
+ *
+ * @param target_freq 目标采样频率（Hz）
+ */
+void set_adc_sampling_rate(float target_freq) {
+  // 假设系统时钟为 32MHz
+  uint32_t system_clock = 32000000;
+  uint32_t adc_clock = system_clock; // 默认不分频
 
-float FFT_INPUT[NUM_SAMPLES] = {0};
-float FFT_OUTPUT[NUM_SAMPLES * 2];
-float FFT_OUTPUT_MAX = 0;
-uint32_t FFT_OUTPUT_MAX_index = 0;
-float findfreq() {
-  gCheckADC = false;
-  DL_DMA_disableChannel(DMA, DMA_CH0_CHAN_ID);
-  DL_DMA_setDestAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)&gADCSamples[0]);
-  DL_DMA_setTransferSize(DMA, DMA_CH0_CHAN_ID, ADC_SAMPLE_SIZE);
-  DL_DMA_enableChannel(DMA, DMA_CH0_CHAN_ID);
-  DL_ADC12_enableDMA(ADC12_0_INST);
-  DL_ADC12_startConversion(ADC12_0_INST);
-  while (false == gCheckADC) {
-    __WFE();
+  DL_ADC12_setClockPrescaler(ADC12_0_INST,
+                             DL_ADC12_CLOCK_PRESCALER_DIV_1); // 默认不分频
+
+  // 如果目标频率过高，尝试用分频降低 ADC 时钟
+  if (target_freq < 1000000) {
+    DL_ADC12_setClockPrescaler(ADC12_0_INST, DL_ADC12_CLOCK_PRESCALER_DIV_4);
+    adc_clock = system_clock / 4;
+  } else if (target_freq < 5000000) {
+    DL_ADC12_setClockPrescaler(ADC12_0_INST, DL_ADC12_CLOCK_PRESCALER_DIV_2);
+    adc_clock = system_clock / 2;
   }
-  int i;
-  for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
-    FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
-    FFT_INPUT[i * 2 + 1] = 0;
+
+  // 计算所需总周期数：Total Cycles = ADC_Clock / Target_Frequency
+  float total_cycles = (float)adc_clock / target_freq;
+
+  // 转换时间约为 13 个时钟周期，因此采样时间 = 总周期 - 13
+  int sample_time = (int)(total_cycles - 13);
+
+  if (sample_time < 1)
+    sample_time = 1; // 最小采样时间为 1 cycle
+  if (sample_time > 1024)
+    sample_time = 1024; // 最大限制
+
+  // 设置采样时间
+  if (sample_time <= 4) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_1);
+  } else if (sample_time <= 8) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_4);
+  } else if (sample_time <= 16) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_8);
+  } else if (sample_time <= 32) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_16);
+  } else if (sample_time <= 64) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_32);
+  } else if (sample_time <= 128) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_64);
+  } else if (sample_time <= 256) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_128);
+  } else if (sample_time <= 512) {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_256);
+  } else {
+    DL_ADC12_setSampleTime(ADC12_0_INST, DL_ADC12_SAMPLE_TIME_512);
   }
-  arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
-  arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, NUM_SAMPLES);
 
-  // arm_max_f32(FFT_OUTPUT, NUM_SAMPLES, &FFT_OUTPUT_MAX,
-  // &FFT_OUTPUT_MAX_index);
-  FFT_OUTPUT[0] = 0;
-  arm_max_f32(FFT_OUTPUT, NUM_SAMPLES / 2, &FFT_OUTPUT_MAX,
-              &FFT_OUTPUT_MAX_index);
-  float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / 1024;
-
-  return base_frequency;
-}
-int main(void) {
-  SYSCFG_DL_init();
-  DL_DMA_setSrcAddr(
-      DMA, DMA_CH0_CHAN_ID,
-      (uint32_t)DL_ADC12_getMemResultAddress(ADC12_0_INST, DL_ADC12_MEM_IDX_0));
-
-  NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
-  gCheckADC = false;
-
-  while (1) {
-  }
-}
-// arm_cfft_q15(&arm_cfft_sR_q15_len256, (q15_t *)gDstBuffer, IFFTFLAG,
-//              BITREVERSE);
-// arm_cmplx_mag_q15((q15_t *)gDstBuffer, (q15_t *)gFFTOutput, NUM_SAMPLES);
-// arm_max_q15((q15_t *)gFFTOutput, NUM_SAMPLES, (q15_t *)&gFFTmaxValue,
-//             (uint32_t *)&gFFTmaxFreqIndex);
-void ADC12_0_INST_IRQHandler(void) {
-  switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
-  case DL_ADC12_IIDX_DMA_DONE:
-    gCheckADC = true;
-    break;
-  default:
-    break;
-  }
+  // 更新全局变量供 findfreq 使用
+  adc_fs = (uint32_t)target_freq;
 }
