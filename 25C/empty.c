@@ -39,14 +39,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ADC_SAMPLE_SIZE 2048
+extern volatile uint32_t interruptVectors[];
+volatile uint8_t ledState = 0; // 0表示LED关闭，1表示LED打开
+#define ADC_SAMPLE_SIZE 1024
 #define maxn(a, b) (a > b ? a : b)
 #define minn(a, b) (a < b ? a : b)
-#define PI 3.141592665358979
+// #define PI 3.141592665358979
 #define USART_TX_LEN 27
 uint8_t USART_TX_BUF[USART_TX_LEN];
 const char hello_msg[] = "Hello, Bluetooth!\n";
-
+// extern volatile uint32_t interruptVectors[];
 float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
 float FFT_OUTPUT[ADC_SAMPLE_SIZE];
 float hann_window[ADC_SAMPLE_SIZE];
@@ -109,7 +111,7 @@ float findvpp() {
               powf((gADCSamples[i + 1] * 3.3 / 4096 - vdc), 2)) /
              adc_fs / 2);
   }
-  __BKPT();
+  // __BKPT();
   power = e * freq / multi;
   int waveform = switchwave();
   switch (waveform) {
@@ -138,7 +140,7 @@ void findbase() {
     FFT_INPUT[i * 2 + 1] = 0;
   }
 
-  arm_cfft_f32(&arm_cfft_sR_f32_len2048, FFT_INPUT, 0, 1);
+  arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
   FFT_OUTPUT[0] = 0;
@@ -148,19 +150,19 @@ void findbase() {
   float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
   if (base_frequency <= 500) {
     adc_fs = 5e3;
-    // __BKPT();
+    __BKPT();
     return;
   } else if (500 < base_frequency && base_frequency < 1e3) {
     adc_fs = base_frequency * 20;
-    // __BKPT();
+    __BKPT();
     return;
-  } else if (base_frequency < 70e3) {
-    adc_fs = base_frequency * 20;
-    // __BKPT();
+  } else if (base_frequency < 45e3) {
+    adc_fs = base_frequency * 15;
+    __BKPT();
     return;
   } else {
-    adc_fs = 400e3;
-    // __BKPT();
+    adc_fs = 600e3;
+    __BKPT();
     return;
   }
 }
@@ -169,15 +171,13 @@ void findbase() {
 float findfreq() {
   StartAdc(adc_fs);
   StartAdc(adc_fs);
-  StartAdc(adc_fs);
-  StartAdc(adc_fs);
   uint16_t check = DL_TimerA_getLoadValue(TIMER_0_INST);
   uint16_t i;
   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
-    FFT_INPUT[i * 2] = (float)(gADCSamples[i]) * hann_window[i];
+    FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
     FFT_INPUT[i * 2 + 1] = 0;
   }
-
+  __BKPT();
   int Vmax[5], Vmin[5];
 
   // 初始化最大值数组为最小值
@@ -240,7 +240,7 @@ float findfreq() {
   float avg_min = (Vmin[0] + Vmin[4]) / 2.0f;
 
   vppfft = (avg_max - avg_min) * 3.3f / 4096.0f;
-  arm_cfft_f32(&arm_cfft_sR_f32_len2048, FFT_INPUT, 0, 1);
+  arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
   FFT_OUTPUT[0] = 0;
@@ -269,6 +269,10 @@ void sendBluetoothData(const uint8_t *data, uint32_t length) {
 int main(void) {
   SYSCFG_DL_init();
 
+  DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+
+  NVIC_EnableIRQ(GPIO_SWITCHES_INT_IRQN);
+
   // 生成汉宁窗函数
   for (uint16_t i = 0; i < ADC_SAMPLE_SIZE; i++) {
     hann_window[i] =
@@ -296,6 +300,13 @@ int main(void) {
   // OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
 
   while (1) {
+    findbase();
+    freq = findfreq();
+    vpp = findvpp();
+    findbase();
+    freq = findfreq();
+    vpp = findvpp();
+    // if (!ledState) {
     // findbase();
     // freq = findfreq();
     // vpp = findvpp();
@@ -304,6 +315,7 @@ int main(void) {
     // vpp = findvpp();
     int waveform = switchwave();
     // __BKPT();
+
     OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
 
     if (waveform == 1) {
@@ -327,14 +339,17 @@ int main(void) {
     for (uint8_t i = 1; i < USART_TX_LEN - 2;
          i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
       checksum += USART_TX_BUF[i];
+      // }
+      USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
+
+      // 添加包尾
+      USART_TX_BUF[USART_TX_LEN - 1] = 0x5A; // 包尾字节
+
+      // 发送数据包到蓝牙
+      sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
     }
-    USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
-
-    // 添加包尾
-    USART_TX_BUF[USART_TX_LEN - 1] = 0x5A; // 包尾字节
-
-    // 发送数据包到蓝牙
-    sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
+  }
+  if (ledState) {
   }
 }
 
@@ -346,6 +361,25 @@ void ADC12_0_INST_IRQHandler(void) {
     gCheckADC = true;
     break;
   default:
+    break;
+  }
+}
+
+void GROUP1_IRQHandler(void) {
+  switch (DL_Interrupt_getPendingGroup(DL_INTERRUPT_GROUP_1)) {
+  case GPIO_SWITCHES_INT_IIDX:
+    for (volatile int i = 0; i < 10000; i++)
+      ; // 简单的延时
+    if (!DL_GPIO_readPins(GPIO_SWITCHES_PORT,
+                          GPIO_SWITCHES_USER_SWITCH_1_PIN)) {
+      ledState = !ledState; // 切换状态
+      if (ledState) {
+        DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+      } else {
+        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+      }
+    }
+    DL_Interrupt_clearGroup(DL_INTERRUPT_GROUP_1, GPIO_SWITCHES_INT_IIDX);
     break;
   }
 }

@@ -59,11 +59,12 @@ GEN_FILES__QUOTED += \
 "device.opt" \
 "ti_msp_dl_config.c" 
 
-SYSCFG_SRCS__QUOTED += \
-"../empty.syscfg" 
-
 C_SRCS__QUOTED += \
+"../empty.c" \
 "./ti_msp_dl_config.c" \
 "C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/m0p/startup_system_files/ticlang/startup_mspm0g350x_ticlang.c" 
+
+SYSCFG_SRCS__QUOTED += \
+"../empty.syscfg" 
 
 
