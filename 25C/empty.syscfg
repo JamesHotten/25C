@@ -11,9 +11,13 @@
  */
 const ADC12         = scripting.addModule("/ti/driverlib/ADC12", {}, false);
 const ADC121        = ADC12.addInstance();
+const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1         = GPIO.addInstance();
 const SYSCTL        = scripting.addModule("/ti/driverlib/SYSCTL");
 const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
+const UART          = scripting.addModule("/ti/driverlib/UART", {}, false);
+const UART1         = UART.addInstance();
 const ProjectConfig = scripting.addModule("/ti/project_config/ProjectConfig");
 
 /**
@@ -63,6 +67,15 @@ ADC121.DMA_CHANNEL.transferSize          = 2048;
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
+GPIO1.$name                          = "GPIO_OLED";
+GPIO1.associatedPins.create(2);
+GPIO1.associatedPins[0].$name        = "PIN_SCL";
+GPIO1.associatedPins[0].assignedPort = "PORTA";
+GPIO1.associatedPins[0].assignedPin  = "12";
+GPIO1.associatedPins[1].$name        = "PIN_SDA";
+GPIO1.associatedPins[1].assignedPort = "PORTA";
+GPIO1.associatedPins[1].assignedPin  = "13";
+
 SYSCTL.forceDefaultClkConfig = true;
 SYSCTL.validateClkStatus     = true;
 
@@ -72,6 +85,14 @@ TIMER1.timerStartTimer             = true;
 TIMER1.event1PublisherChannel      = 1;
 TIMER1.event1ControllerInterruptEn = ["ZERO_EVENT"];
 TIMER1.timerMode                   = "PERIODIC";
+
+UART1.$name                    = "UART_0";
+UART1.uartClkSrc               = "LFCLK";
+UART1.ovsRate                  = "3";
+UART1.peripheral.rxPin.$assign = "PA11";
+UART1.peripheral.txPin.$assign = "PA10";
+UART1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric1";
+UART1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
 
 ProjectConfig.genLibCMSIS   = true;
 ProjectConfig.genLibDrivers = true;
@@ -89,5 +110,8 @@ ADC121.DMA_CHANNEL.peripheral.$suggestSolution     = "DMA_CH0";
 Board.peripheral.$suggestSolution                  = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution         = "PA20";
 Board.peripheral.swdioPin.$suggestSolution         = "PA19";
+GPIO1.associatedPins[0].pin.$suggestSolution       = "PA12";
+GPIO1.associatedPins[1].pin.$suggestSolution       = "PA13";
 SYSCTL.peripheral.$suggestSolution                 = "SYSCTL";
 TIMER1.peripheral.$suggestSolution                 = "TIMA0";
+UART1.peripheral.$suggestSolution                  = "UART0";

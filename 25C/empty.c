@@ -29,18 +29,28 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #include "arm_const_structs.h"
 #include "arm_math.h"
+#include "oled.h"
 #include "ti/driverlib/dl_adc12.h"
 #include "ti_msp_dl_config.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 #define ADC_SAMPLE_SIZE 2048
 #define maxn(a, b) (a > b ? a : b)
 #define minn(a, b) (a < b ? a : b)
+#define PI 3.141592665358979
+#define USART_TX_LEN 27
+uint8_t USART_TX_BUF[USART_TX_LEN];
+const char hello_msg[] = "Hello, Bluetooth!\n";
 
 float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
 float FFT_OUTPUT[ADC_SAMPLE_SIZE];
+float hann_window[ADC_SAMPLE_SIZE];
+
 float FFT_OUTPUT_MAX = 0;
 uint32_t FFT_OUTPUT_MAX_index = 0;
 
@@ -68,8 +78,8 @@ void StartAdc(int freq) {
 
 int switchwave() {
   uint16_t waveform = 0;
-  float k =
-      FFT_OUTPUT[FFT_OUTPUT_MAX_index] / FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index];
+  float k = FFT_OUTPUT[FFT_OUTPUT_MAX_index] /
+            FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index]; // 需要加一个for循环
   if (k < 9 && k > 1)
     waveform = 2; // 方波
   if (k < 20 && k > 9)
@@ -89,9 +99,14 @@ float findvpp() {
   point = adc_fs / freq;
   uint16_t i;
   int multi = 3;
+  float vdc = 0;
+  int sum = 0;
+  for (i = 0; i < point * multi; i++)
+    sum = sum + gADCSamples[i] * 3.3 / 4096;
+  vdc = sum / (multi * point);
   for (i = 0; i < point * multi; i++) {
-    e = e + ((powf((gADCSamples[i] * 3.3 / 4096 - vppfft / 2), 2) +
-              powf((gADCSamples[i + 1] * 3.3 / 4096 - vppfft / 2), 2)) /
+    e = e + ((powf((gADCSamples[i] * 3.3 / 4096 - vdc), 2) +
+              powf((gADCSamples[i + 1] * 3.3 / 4096 - vdc), 2)) /
              adc_fs / 2);
   }
   __BKPT();
@@ -150,6 +165,7 @@ void findbase() {
   }
 }
 
+// imppact1:对采样数据进行加窗处理,加窗会影响赋值失真，待解决
 float findfreq() {
   StartAdc(adc_fs);
   StartAdc(adc_fs);
@@ -158,7 +174,7 @@ float findfreq() {
   uint16_t check = DL_TimerA_getLoadValue(TIMER_0_INST);
   uint16_t i;
   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
-    FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
+    FFT_INPUT[i * 2] = (float)(gADCSamples[i]) * hann_window[i];
     FFT_INPUT[i * 2 + 1] = 0;
   }
 
@@ -238,26 +254,87 @@ float findfreq() {
   return base_frequency;
 }
 
+void sendBluetoothData(const uint8_t *data, uint32_t length) {
+  uint32_t i;
+  for (i = 0; i < length; i++) {
+    while (DL_UART_Extend_isTXFIFOEmpty(UART_0_INST) == 0)
+      ; // 等待发送缓冲区有空间
+    DL_UART_Extend_transmitData(UART_0_INST, data[i]);
+
+    while (DL_UART_isBusy(UART_0_INST))
+      ;
+  }
+}
+
 int main(void) {
   SYSCFG_DL_init();
-  DL_DMA_setSrcAddr(DMA, DMA_CH0_CHAN_ID,
-                    (uint32_t)0x40556280); // FIFO模式：降低DMA的使用频率
+
+  // 生成汉宁窗函数
+  for (uint16_t i = 0; i < ADC_SAMPLE_SIZE; i++) {
+    hann_window[i] =
+        0.5f - 0.5f * arm_cos_f32(2 * PI * i / (ADC_SAMPLE_SIZE - 1));
+  }
+
+  USART_TX_BUF[0] = 0xA5; // 数据包头，下面这串定义只能放在这里，否则失效
+  *((float *)(&USART_TX_BUF[1])) = 123.45; // float值
+  *((float *)(&USART_TX_BUF[5])) = 65.78;  // float值
+  *((float *)(&USART_TX_BUF[9])) = 30.67;  // float值
+  *((float *)(&USART_TX_BUF[13])) = 15.25; // float值
+  *((float *)(&USART_TX_BUF[17])) = 8.99;  // float值
+  *((float *)(&USART_TX_BUF[21])) = 0.98;  // float值
+
+  DL_DMA_setSrcAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)0x40556280);
   DL_DMA_setDestAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)&gADCSamples[0]);
   DL_DMA_enableChannel(DMA, DMA_CH0_CHAN_ID);
 
   /* Setup interrupts on device */
   NVIC_EnableIRQ(ADC12_0_INST_INT_IRQN);
   // DL_ADC12_startConversion(ADC12_0_INST);
+  OLED_Init();
+  OLED_Clear();
+  // OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
+  // OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
 
   while (1) {
     // findbase();
     // freq = findfreq();
     // vpp = findvpp();
-    int cntwa = 0;
-    findbase();
-    freq = findfreq();
-    vpp = findvpp();
-    __BKPT();
+    // findbase();
+    // freq = findfreq();
+    // vpp = findvpp();
+    int waveform = switchwave();
+    // __BKPT();
+    OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
+
+    if (waveform == 1) {
+      OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
+    } else if (waveform == 2) {
+      OLED_ShowString(50, 2, (uint8_t *)"square", 16);
+    } else if (waveform == 3) {
+      OLED_ShowString(50, 2, (uint8_t *)"triangle", 16);
+    } else {
+      { OLED_ShowString(50, 2, (uint8_t *)"wait", 16); }
+    }
+    OLED_ShowString(0, 4, (uint8_t *)"frequency:", 16);
+    OLED_ShowString(0, 6, (uint8_t *)"peaktopeak:", 16);
+    delay_ms(1000);
+    OLED_Clear();
+
+    sendBluetoothData((const uint8_t *)hello_msg, strlen(hello_msg));
+
+    // 计算校验和
+    uint8_t checksum = 0;
+    for (uint8_t i = 1; i < USART_TX_LEN - 2;
+         i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
+      checksum += USART_TX_BUF[i];
+    }
+    USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
+
+    // 添加包尾
+    USART_TX_BUF[USART_TX_LEN - 1] = 0x5A; // 包尾字节
+
+    // 发送数据包到蓝牙
+    sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
   }
 }
 

@@ -41,7 +41,7 @@
 #define ti_msp_dl_config_h
 
 #define CONFIG_MSPM0G350X
-#define CONFIG_MSPM0G3505
+#define CONFIG_MSPM0G3507
 
 #if defined(__ti_version__) || defined(__TI_COMPILER_VERSION__)
 #define SYSCONFIG_WEAK __attribute__((weak))

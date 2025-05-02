@@ -86,6 +86,26 @@ extern "C" {
 
 
 
+/* Defines for UART_0 */
+#define UART_0_INST                                                        UART0
+#define UART_0_INST_FREQUENCY                                              32768
+#define UART_0_INST_IRQHandler                                  UART0_IRQHandler
+#define UART_0_INST_INT_IRQN                                      UART0_INT_IRQn
+#define GPIO_UART_0_RX_PORT                                                GPIOA
+#define GPIO_UART_0_TX_PORT                                                GPIOA
+#define GPIO_UART_0_RX_PIN                                        DL_GPIO_PIN_11
+#define GPIO_UART_0_TX_PIN                                        DL_GPIO_PIN_10
+#define GPIO_UART_0_IOMUX_RX                                     (IOMUX_PINCM22)
+#define GPIO_UART_0_IOMUX_TX                                     (IOMUX_PINCM21)
+#define GPIO_UART_0_IOMUX_RX_FUNC                      IOMUX_PINCM22_PF_UART0_RX
+#define GPIO_UART_0_IOMUX_TX_FUNC                      IOMUX_PINCM21_PF_UART0_TX
+#define UART_0_BAUD_RATE                                                  (9600)
+#define UART_0_IBRD_33_kHZ_9600_BAUD                                         (1)
+#define UART_0_FBRD_33_kHZ_9600_BAUD                                         (9)
+
+
+
+
 
 /* Defines for ADC12_0 */
 #define ADC12_0_INST                                                        ADC0
@@ -104,6 +124,17 @@ extern "C" {
 #define DMA_CH0_CHAN_ID                                                      (0)
 #define ADC12_0_INST_DMA_TRIGGER                      (DMA_ADC0_EVT_GEN_BD_TRIG)
 
+
+/* Port definition for Pin Group GPIO_OLED */
+#define GPIO_OLED_PORT                                                   (GPIOA)
+
+/* Defines for PIN_SCL: GPIOA.12 with pinCMx 34 on package pin 5 */
+#define GPIO_OLED_PIN_SCL_PIN                                   (DL_GPIO_PIN_12)
+#define GPIO_OLED_PIN_SCL_IOMUX                                  (IOMUX_PINCM34)
+/* Defines for PIN_SDA: GPIOA.13 with pinCMx 35 on package pin 6 */
+#define GPIO_OLED_PIN_SDA_PIN                                   (DL_GPIO_PIN_13)
+#define GPIO_OLED_PIN_SDA_IOMUX                                  (IOMUX_PINCM35)
+
 /* clang-format on */
 
 void SYSCFG_DL_init(void);
@@ -112,8 +143,10 @@ void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_SYSCTL_CLK_init(void);
 void SYSCFG_DL_TIMER_0_init(void);
+void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_ADC12_0_init(void);
 void SYSCFG_DL_DMA_init(void);
+
 
 bool SYSCFG_DL_saveConfiguration(void);
 bool SYSCFG_DL_restoreConfiguration(void);
