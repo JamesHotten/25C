@@ -25,6 +25,31 @@
                 "name": "25C",
                 "resourceId": "/25C"
             }
+        },
+        {
+            "name": "OLED_Software_IIC",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "OLED_Software_IIC",
+                "resourceId": "/OLED_Software_IIC"
+            }
+        },
+        {
+            "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
+                "resourceId": "/uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang"
+            },
+            "debuggerSettings": {
+                "targetConfigs/MSPM0G3507.ccxml": {
+                    "Texas Instruments XDS110 USB Debug Probe/CORTEX_M0P": {
+                        "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
+                    }
+                }
+            }
         }
     ]
 }

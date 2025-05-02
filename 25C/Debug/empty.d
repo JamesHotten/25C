@@ -1,16 +1,17 @@
 # FIXED
 
-.o: ../empty.c \
+empty.o: ../empty.c \
  C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_const_structs.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_math.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/cmsis_compiler.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/cmsis_gcc.h \
+ C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/cmsis_compiler.h \
+ C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/cmsis_gcc.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_common_tables.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_adc12.h \
+ C:/Users/JamesHotten/Desktop/code/TICCS/25C/OLED/oled.h \
+ ti_msp_dl_config.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/msp.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/DeviceFamily.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/m0p/mspm0g350x.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/core_cm0plus.h \
+ C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/core_cm0plus.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_adc12.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_aes.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_comp.h \
@@ -37,11 +38,11 @@
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/hw_debugss.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/hw_sysctl.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/sysctl/hw_sysctl_mspm0g1x0x_g3x0x.h \
+ C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/driverlib.h \
+ C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_adc12.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_common.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_factoryregion.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_core.h \
- ti_msp_dl_config.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/driverlib.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_aes.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_aesadv.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_comp.h \
@@ -82,14 +83,15 @@
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_systick.h
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_const_structs.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_math.h:
-C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/cmsis_compiler.h:
-C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/cmsis_gcc.h:
+C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/cmsis_compiler.h:
+C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/cmsis_gcc.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_common_tables.h:
-C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_adc12.h:
+C:/Users/JamesHotten/Desktop/code/TICCS/25C/OLED/oled.h:
+ti_msp_dl_config.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/msp.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/DeviceFamily.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/m0p/mspm0g350x.h:
-C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/CORE/Include/core_cm0plus.h:
+C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/core_cm0plus.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_adc12.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_aes.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/hw_comp.h:
@@ -116,11 +118,11 @@ C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/hw_cpuss.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/hw_debugss.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/hw_sysctl.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/devices/msp/peripherals/m0p/sysctl/hw_sysctl_mspm0g1x0x_g3x0x.h:
+C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/driverlib.h:
+C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_adc12.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_common.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_factoryregion.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_core.h:
-ti_msp_dl_config.h:
-C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/driverlib.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_aes.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_aesadv.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_comp.h:

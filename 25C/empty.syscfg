@@ -11,9 +11,17 @@
  */
 const ADC12         = scripting.addModule("/ti/driverlib/ADC12", {}, false);
 const ADC121        = ADC12.addInstance();
+const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1         = GPIO.addInstance();
+const GPIO2         = GPIO.addInstance();
+const GPIO3         = GPIO.addInstance();
+const GPIO4         = GPIO.addInstance();
 const SYSCTL        = scripting.addModule("/ti/driverlib/SYSCTL");
 const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
+const TIMER2        = TIMER.addInstance();
+const UART          = scripting.addModule("/ti/driverlib/UART", {}, false);
+const UART1         = UART.addInstance();
 const ProjectConfig = scripting.addModule("/ti/project_config/ProjectConfig");
 
 /**
@@ -59,9 +67,37 @@ ADC121.DMA_CHANNEL.configureTransferSize = true;
 ADC121.DMA_CHANNEL.transferMode          = "FULL_CH_REPEAT_SINGLE";
 ADC121.DMA_CHANNEL.srcLength             = "HALF_WORD";
 ADC121.DMA_CHANNEL.dstLength             = "HALF_WORD";
-ADC121.DMA_CHANNEL.transferSize          = 2048;
+ADC121.DMA_CHANNEL.transferSize          = 1024;
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
+
+GPIO1.$name                          = "GPIO_OLED";
+GPIO1.associatedPins.create(2);
+GPIO1.associatedPins[0].$name        = "PIN_SCL";
+GPIO1.associatedPins[0].assignedPort = "PORTA";
+GPIO1.associatedPins[0].assignedPin  = "12";
+GPIO1.associatedPins[1].$name        = "PIN_SDA";
+GPIO1.associatedPins[1].assignedPort = "PORTA";
+GPIO1.associatedPins[1].assignedPin  = "13";
+
+GPIO2.$name                          = "GPIO_GRP_0";
+GPIO2.associatedPins[0].$name        = "PIN_0";
+GPIO2.associatedPins[0].assignedPort = "PORTA";
+
+GPIO3.$name                              = "GPIO_SWITCHES";
+GPIO3.associatedPins[0].$name            = "USER_SWITCH_1";
+GPIO3.associatedPins[0].direction        = "INPUT";
+GPIO3.associatedPins[0].assignedPort     = "PORTB";
+GPIO3.associatedPins[0].assignedPin      = "21";
+GPIO3.associatedPins[0].internalResistor = "PULL_UP";
+GPIO3.associatedPins[0].interruptEn      = true;
+GPIO3.associatedPins[0].polarity         = "RISE_FALL";
+
+GPIO4.$name                          = "GPIO_LEDS";
+GPIO4.associatedPins[0].$name        = "USER_LED_1";
+GPIO4.associatedPins[0].initialValue = "SET";
+GPIO4.associatedPins[0].assignedPort = "PORTA";
+GPIO4.associatedPins[0].assignedPin  = "0";
 
 SYSCTL.forceDefaultClkConfig = true;
 SYSCTL.validateClkStatus     = true;
@@ -72,6 +108,21 @@ TIMER1.timerStartTimer             = true;
 TIMER1.event1PublisherChannel      = 1;
 TIMER1.event1ControllerInterruptEn = ["ZERO_EVENT"];
 TIMER1.timerMode                   = "PERIODIC";
+
+TIMER2.$name                       = "TIMER_1";
+TIMER2.timerMode                   = "PERIODIC";
+TIMER2.timerStartTimer             = true;
+TIMER2.timerPeriod                 = "20us";
+TIMER2.event1PublisherChannel      = 2;
+TIMER2.event1ControllerInterruptEn = ["ZERO_EVENT"];
+
+UART1.$name                    = "UART_0";
+UART1.uartClkSrc               = "LFCLK";
+UART1.ovsRate                  = "3";
+UART1.peripheral.rxPin.$assign = "PA11";
+UART1.peripheral.txPin.$assign = "PA10";
+UART1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric1";
+UART1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
 
 ProjectConfig.genLibCMSIS   = true;
 ProjectConfig.genLibDrivers = true;
@@ -89,5 +140,12 @@ ADC121.DMA_CHANNEL.peripheral.$suggestSolution     = "DMA_CH0";
 Board.peripheral.$suggestSolution                  = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution         = "PA20";
 Board.peripheral.swdioPin.$suggestSolution         = "PA19";
+GPIO1.associatedPins[0].pin.$suggestSolution       = "PA12";
+GPIO1.associatedPins[1].pin.$suggestSolution       = "PA13";
+GPIO2.associatedPins[0].pin.$suggestSolution       = "PA14";
+GPIO3.associatedPins[0].pin.$suggestSolution       = "PB21";
+GPIO4.associatedPins[0].pin.$suggestSolution       = "PA0";
 SYSCTL.peripheral.$suggestSolution                 = "SYSCTL";
-TIMER1.peripheral.$suggestSolution                 = "TIMA0";
+TIMER1.peripheral.$suggestSolution                 = "TIMA1";
+TIMER2.peripheral.$suggestSolution                 = "TIMA0";
+UART1.peripheral.$suggestSolution                  = "UART0";

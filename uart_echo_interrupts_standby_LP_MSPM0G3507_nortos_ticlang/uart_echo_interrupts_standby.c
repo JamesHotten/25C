@@ -31,7 +31,6 @@
  */
 
 #include "ti_msp_dl_config.h"
-#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -39,6 +38,7 @@
 
 #define USART_TX_LEN 27
 uint8_t USART_TX_BUF[USART_TX_LEN];
+const char hello_msg[] = "Hello, Bluetooth!\n";
 void sendBluetoothData(const uint8_t *data, uint32_t length) {
   uint32_t i;
   for (i = 0; i < length; i++) {
@@ -52,7 +52,7 @@ void sendBluetoothData(const uint8_t *data, uint32_t length) {
 }
 
 int main(void) {
-
+  SYSCFG_DL_init();
   // 初始化数据包
   USART_TX_BUF[0] = 0xA5;                  // 数据包头
   *((float *)(&USART_TX_BUF[1])) = 123.45; // float值
@@ -65,10 +65,10 @@ int main(void) {
   // 主循环
   while (1) {
     // 发送简单的“hello”消息到蓝牙
-    const char hello_msg[] = "Hello, Bluetooth!\n";
+
     sendBluetoothData((const uint8_t *)hello_msg, strlen(hello_msg));
 
-    // 计算校验和
+        // 计算校验和
     uint8_t checksum = 0;
     for (uint8_t i = 1; i < USART_TX_LEN - 2;
          i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
