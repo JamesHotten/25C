@@ -77,6 +77,21 @@ extern "C" {
 
 
 
+/* Defines for CAPTURE_0 */
+#define CAPTURE_0_INST                                                   (TIMG0)
+#define CAPTURE_0_INST_IRQHandler                               TIMG0_IRQHandler
+#define CAPTURE_0_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
+#define CAPTURE_0_INST_LOAD_VALUE                                       (62499U)
+/* GPIO defines for channel 0 */
+#define GPIO_CAPTURE_0_C0_PORT                                             GPIOB
+#define GPIO_CAPTURE_0_C0_PIN                                     DL_GPIO_PIN_10
+#define GPIO_CAPTURE_0_C0_IOMUX                                  (IOMUX_PINCM27)
+#define GPIO_CAPTURE_0_C0_IOMUX_FUNC                 IOMUX_PINCM27_PF_TIMG0_CCP0
+
+
+
+
+
 /* Defines for TIMER_0 */
 #define TIMER_0_INST                                                     (TIMA1)
 #define TIMER_0_INST_IRQHandler                                 TIMA1_IRQHandler
@@ -170,6 +185,7 @@ void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_SYSCTL_CLK_init(void);
+void SYSCFG_DL_CAPTURE_0_init(void);
 void SYSCFG_DL_TIMER_0_init(void);
 void SYSCFG_DL_TIMER_1_init(void);
 void SYSCFG_DL_UART_0_init(void);

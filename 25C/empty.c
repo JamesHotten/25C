@@ -53,6 +53,8 @@ float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
 float FFT_OUTPUT[ADC_SAMPLE_SIZE];
 float hann_window[ADC_SAMPLE_SIZE];
 
+int buk[600];
+
 float FFT_OUTPUT_MAX = 0;
 uint32_t FFT_OUTPUT_MAX_index = 0;
 
@@ -61,8 +63,12 @@ volatile bool gCheckADC;
 float freq;
 float vpp;
 uint32_t adc_fs = 4e5;
-uint16_t point;
 
+// 低频输入捕获
+volatile uint32_t gCaptureCnt;
+volatile bool gSynced;
+volatile bool gCheckCaptures;
+uint32_t gLoadValue;
 void StartAdc(int freq) {
   DL_TimerA_stopCounter(TIMER_0_INST);
   uint16_t sampletime = 32e6 / freq;
@@ -80,8 +86,11 @@ void StartAdc(int freq) {
 
 int switchwave() {
   uint16_t waveform = 0;
-  float k = FFT_OUTPUT[FFT_OUTPUT_MAX_index] /
-            FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index]; // 需要加一个for循环
+  float harm;
+  harm = maxn(maxn(FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index],
+                   FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 1]),
+              FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 2]);
+  float k = FFT_OUTPUT[FFT_OUTPUT_MAX_index] / harm; // 需要加一个for循环
   if (k < 9 && k > 1)
     waveform = 2; // 方波
   if (k < 20 && k > 9)
@@ -91,21 +100,21 @@ int switchwave() {
   return waveform;
 }
 
-float vppfft;
+float vppadc;
 
 float findvpp() {
   StartAdc(adc_fs);
   float ans = -1;
   float e = 0.0;
   float power = 0.0;
-  point = adc_fs / freq;
+  uint16_t point = adc_fs / freq;
   uint16_t i;
-  int multi = 3;
+  int multi = 1024 / point;
   float vdc = 0;
-  int sum = 0;
-  for (i = 0; i < point * multi; i++)
-    sum = sum + gADCSamples[i] * 3.3 / 4096;
-  vdc = sum / (multi * point);
+  for (i = 0; i < ADC_SAMPLE_SIZE; i++)
+    vdc += (float)gADCSamples[i];
+  vdc = vdc * 3.3 / 4096 / ADC_SAMPLE_SIZE;
+  __BKPT();
   for (i = 0; i < point * multi; i++) {
     e = e + ((powf((gADCSamples[i] * 3.3 / 4096 - vdc), 2) +
               powf((gADCSamples[i + 1] * 3.3 / 4096 - vdc), 2)) /
@@ -148,25 +157,77 @@ void findbase() {
               &FFT_OUTPUT_MAX_index);
 
   float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
-  if (base_frequency <= 500) {
+  if (base_frequency > 100e3) //
     adc_fs = 5e3;
-    __BKPT();
+  if (base_frequency <= 200) {
+    adc_fs = 5e3;
+    // __BKPT();
     return;
-  } else if (500 < base_frequency && base_frequency < 1e3) {
+  } else if (200 < base_frequency && base_frequency < 1e3) {
     adc_fs = base_frequency * 20;
-    __BKPT();
+    // __BKPT();
     return;
   } else if (base_frequency < 45e3) {
     adc_fs = base_frequency * 15;
-    __BKPT();
+    // __BKPT();
     return;
   } else {
     adc_fs = 600e3;
-    __BKPT();
+    // __BKPT();
     return;
   }
 }
 
+float lowfreqcap() {
+  // float f = 0.0f;
+  // float f_values[50]; // 存储每次计算的 f 值
+  // for (int i = 0; i < 50; i++) {
+  //   volatile static uint32_t pwmPeriod;
+  //   gLoadValue = DL_TimerG_getLoadValue(CAPTURE_0_INST);
+  //   gSynced = false;
+  //   gCheckCaptures = false;
+  //   while (false == gCheckCaptures) {
+  //     __WFE();
+  //   }
+  //   gCheckCaptures = false;
+  //   pwmPeriod = gLoadValue - gCaptureCnt;
+  //   f_values[i] = 1.01 / (pwmPeriod * 16e-6);
+  // }
+  // __BKPT();
+  // // 寻找出现次数最多的 f 值（近似匹配）
+  // int max_count = 0;
+  // float most_frequent = f_values[0];
+
+  // for (int i = 0; i < 50; i++) {
+  //   int count = 0;
+  //   for (int j = 0; j < 50; j++) {
+  //     // 使用一个小的误差范围比较浮点数
+  //     if (fabsf(f_values[i] - f_values[j]) < 0.01f) {
+  //       count++;
+  //     }
+  //   }
+  //   if (count > max_count) {
+  //     max_count = count;
+  //     most_frequent = f_values[i];
+  //   }
+  // }
+  // return most_frequent;
+  float f;
+  volatile static uint32_t pwmPeriod;
+  gLoadValue = DL_TimerG_getLoadValue(CAPTURE_0_INST);
+  gSynced = false;
+  gCheckCaptures = false;
+  int timer = 10;
+  while (false == gCheckCaptures && timer--) {
+    __WFE();
+  }
+  if (!timer)
+    return 1;
+  gCheckCaptures = false;
+  pwmPeriod = gLoadValue - gCaptureCnt;
+  f = 1.01 / (pwmPeriod * 16e-6);
+  return f;
+}
 // imppact1:对采样数据进行加窗处理,加窗会影响赋值失真，待解决
 float findfreq() {
   StartAdc(adc_fs);
@@ -177,7 +238,7 @@ float findfreq() {
     FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
     FFT_INPUT[i * 2 + 1] = 0;
   }
-  __BKPT();
+  // __BKPT();
   int Vmax[5], Vmin[5];
 
   // 初始化最大值数组为最小值
@@ -238,8 +299,8 @@ float findfreq() {
   // 计算峰峰值：使用第2~5大/小值平均，避免异常点干扰
   float avg_max = (Vmax[0] + Vmax[4]) / 2.0f;
   float avg_min = (Vmin[0] + Vmin[4]) / 2.0f;
-
-  vppfft = (avg_max - avg_min) * 3.3f / 4096.0f;
+  vppadc = (avg_max - avg_min) * 3.3f / 4096.0f;
+  vpp = findvpp();
   arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
@@ -249,8 +310,10 @@ float findfreq() {
   // FFT_OUTPUT[0] = 0;
   // arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE / 2, &FFT_OUTPUT_MAX,
   //             &FFT_OUTPUT_MAX_index);
-
   float base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
+  if (base_frequency <= 300)
+    return lowfreqcap();
+
   return base_frequency;
 }
 
@@ -266,8 +329,59 @@ void sendBluetoothData(const uint8_t *data, uint32_t length) {
   }
 }
 
+void BluetoothTrans(float val1, float val2, float val3, float val4, float val5,
+                    float val6) {
+  sendBluetoothData((const uint8_t *)hello_msg, strlen(hello_msg));
+  USART_TX_BUF[0] = 0xA5; // 数据包头，下面这串定义只能放在这里，否则失效
+  *((float *)(&USART_TX_BUF[1])) = val1;  // float值
+  *((float *)(&USART_TX_BUF[5])) = val2;  // float值
+  *((float *)(&USART_TX_BUF[9])) = val3;  // float值
+  *((float *)(&USART_TX_BUF[13])) = val4; // float值
+  *((float *)(&USART_TX_BUF[17])) = val5; // float值
+  *((float *)(&USART_TX_BUF[21])) = val6; // float值
+  // 计算校验和
+  uint8_t checksum = 0;
+  for (uint8_t i = 1; i < USART_TX_LEN - 2;
+       i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
+    checksum += USART_TX_BUF[i];
+    // }
+    USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
+
+    // 添加包尾
+    USART_TX_BUF[USART_TX_LEN - 1] = 0x5A; // 包尾字节
+
+    // 发送数据包到蓝牙
+    sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
+  }
+}
+
+void oledshow() {
+  int waveform = switchwave();
+  // __BKPT();
+
+  OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
+
+  if (waveform == 1) {
+    OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
+  } else if (waveform == 2) {
+    OLED_ShowString(50, 2, (uint8_t *)"square", 16);
+  } else if (waveform == 3) {
+    OLED_ShowString(50, 2, (uint8_t *)"triangle", 16);
+  } else {
+    { OLED_ShowString(50, 2, (uint8_t *)"wait", 16); }
+  }
+  OLED_ShowString(0, 4, (uint8_t *)"frequency:", 16);
+  OLED_ShowString(0, 6, (uint8_t *)"peaktopeak:", 16);
+  delay_ms(1000);
+  OLED_Clear();
+}
+
 int main(void) {
   SYSCFG_DL_init();
+  DL_TimerG_setCoreHaltBehavior(CAPTURE_0_INST, DL_TIMER_CORE_HALT_IMMEDIATE);
+
+  NVIC_EnableIRQ(CAPTURE_0_INST_INT_IRQN);
+  DL_TimerG_startCounter(CAPTURE_0_INST);
 
   DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
 
@@ -278,14 +392,6 @@ int main(void) {
     hann_window[i] =
         0.5f - 0.5f * arm_cos_f32(2 * PI * i / (ADC_SAMPLE_SIZE - 1));
   }
-
-  USART_TX_BUF[0] = 0xA5; // 数据包头，下面这串定义只能放在这里，否则失效
-  *((float *)(&USART_TX_BUF[1])) = 123.45; // float值
-  *((float *)(&USART_TX_BUF[5])) = 65.78;  // float值
-  *((float *)(&USART_TX_BUF[9])) = 30.67;  // float值
-  *((float *)(&USART_TX_BUF[13])) = 15.25; // float值
-  *((float *)(&USART_TX_BUF[17])) = 8.99;  // float值
-  *((float *)(&USART_TX_BUF[21])) = 0.98;  // float值
 
   DL_DMA_setSrcAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)0x40556280);
   DL_DMA_setDestAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t)&gADCSamples[0]);
@@ -302,10 +408,7 @@ int main(void) {
   while (1) {
     findbase();
     freq = findfreq();
-    vpp = findvpp();
-    findbase();
-    freq = findfreq();
-    vpp = findvpp();
+
     // if (!ledState) {
     // findbase();
     // freq = findfreq();
@@ -313,43 +416,10 @@ int main(void) {
     // findbase();
     // freq = findfreq();
     // vpp = findvpp();
-    int waveform = switchwave();
-    // __BKPT();
 
-    OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
-
-    if (waveform == 1) {
-      OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
-    } else if (waveform == 2) {
-      OLED_ShowString(50, 2, (uint8_t *)"square", 16);
-    } else if (waveform == 3) {
-      OLED_ShowString(50, 2, (uint8_t *)"triangle", 16);
-    } else {
-      { OLED_ShowString(50, 2, (uint8_t *)"wait", 16); }
+    // }
+    if (ledState) {
     }
-    OLED_ShowString(0, 4, (uint8_t *)"frequency:", 16);
-    OLED_ShowString(0, 6, (uint8_t *)"peaktopeak:", 16);
-    delay_ms(1000);
-    OLED_Clear();
-
-    sendBluetoothData((const uint8_t *)hello_msg, strlen(hello_msg));
-
-    // 计算校验和
-    uint8_t checksum = 0;
-    for (uint8_t i = 1; i < USART_TX_LEN - 2;
-         i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
-      checksum += USART_TX_BUF[i];
-      // }
-      USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
-
-      // 添加包尾
-      USART_TX_BUF[USART_TX_LEN - 1] = 0x5A; // 包尾字节
-
-      // 发送数据包到蓝牙
-      sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
-    }
-  }
-  if (ledState) {
   }
 }
 
@@ -380,6 +450,26 @@ void GROUP1_IRQHandler(void) {
       }
     }
     DL_Interrupt_clearGroup(DL_INTERRUPT_GROUP_1, GPIO_SWITCHES_INT_IIDX);
+    break;
+  }
+}
+
+void CAPTURE_0_INST_IRQHandler(void) {
+  switch (DL_TimerG_getPendingInterrupt(CAPTURE_0_INST)) {
+  case DL_TIMERG_IIDX_CC1_DN:
+    if (gSynced == true) {
+      gCaptureCnt =
+          DL_TimerG_getCaptureCompareValue(CAPTURE_0_INST, DL_TIMER_CC_1_INDEX);
+      gCheckCaptures = true;
+    } else {
+      gSynced = true;
+    }
+    DL_TimerG_setTimerCount(CAPTURE_0_INST, gLoadValue);
+    break;
+  case DL_TIMERG_IIDX_ZERO:
+    gSynced = false;
+    break;
+  default:
     break;
   }
 }

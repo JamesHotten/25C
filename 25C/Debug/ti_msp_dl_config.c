@@ -53,6 +53,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_GPIO_init();
     /* Module-Specific Initializations*/
     SYSCFG_DL_SYSCTL_init();
+    SYSCFG_DL_CAPTURE_0_init();
     SYSCFG_DL_TIMER_0_init();
     SYSCFG_DL_TIMER_1_init();
     SYSCFG_DL_UART_0_init();
@@ -60,6 +61,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_DMA_init();
     SYSCFG_DL_SYSCTL_CLK_init();
     /* Ensure backup structures have no valid state */
+
 	gTIMER_0Backup.backupRdy 	= false;
 	gTIMER_1Backup.backupRdy 	= false;
 
@@ -94,6 +96,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 {
     DL_GPIO_reset(GPIOA);
     DL_GPIO_reset(GPIOB);
+    DL_TimerG_reset(CAPTURE_0_INST);
     DL_TimerA_reset(TIMER_0_INST);
     DL_TimerA_reset(TIMER_1_INST);
     DL_UART_Main_reset(UART_0_INST);
@@ -102,6 +105,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 
     DL_GPIO_enablePower(GPIOA);
     DL_GPIO_enablePower(GPIOB);
+    DL_TimerG_enablePower(CAPTURE_0_INST);
     DL_TimerA_enablePower(TIMER_0_INST);
     DL_TimerA_enablePower(TIMER_1_INST);
     DL_UART_Main_enablePower(UART_0_INST);
@@ -112,6 +116,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 
 SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 {
+
+    DL_GPIO_initPeripheralInputFunction(GPIO_CAPTURE_0_C0_IOMUX,GPIO_CAPTURE_0_C0_IOMUX_FUNC);
 
     DL_GPIO_initPeripheralOutputFunction(
         GPIO_UART_0_IOMUX_TX, GPIO_UART_0_IOMUX_TX_FUNC);
@@ -171,6 +177,44 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_CLK_init(void) {
 }
 
 
+
+
+/*
+ * Timer clock configuration to be sourced by BUSCLK /  (16000000 Hz)
+ * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
+ *   62500 Hz = 16000000 Hz / (2 * (255 + 1))
+ */
+static const DL_TimerG_ClockConfig gCAPTURE_0ClockConfig = {
+    .clockSel    = DL_TIMER_CLOCK_BUSCLK,
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_2,
+    .prescale = 255U
+};
+
+/*
+ * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
+ * CAPTURE_0_INST_LOAD_VALUE = (1s * 62500 Hz) - 1
+ */
+static const DL_TimerG_CaptureCombinedConfig gCAPTURE_0CaptureConfig = {
+    .captureMode    = DL_TIMER_CAPTURE_COMBINED_MODE_PULSE_WIDTH_AND_PERIOD,
+    .period         = CAPTURE_0_INST_LOAD_VALUE,
+    .startTimer     = DL_TIMER_STOP,
+    .inputChan      = DL_TIMER_INPUT_CHAN_0,
+    .inputInvMode   = DL_TIMER_CC_INPUT_INV_NOINVERT,
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_CAPTURE_0_init(void) {
+
+    DL_TimerG_setClockConfig(CAPTURE_0_INST,
+        (DL_TimerG_ClockConfig *) &gCAPTURE_0ClockConfig);
+
+    DL_TimerG_initCaptureCombinedMode(CAPTURE_0_INST,
+        (DL_TimerG_CaptureCombinedConfig *) &gCAPTURE_0CaptureConfig);
+    DL_TimerG_enableInterrupt(CAPTURE_0_INST , DL_TIMERG_INTERRUPT_CC1_DN_EVENT |
+		DL_TIMERG_INTERRUPT_ZERO_EVENT);
+
+    DL_TimerG_enableClock(CAPTURE_0_INST);
+
+}
 
 
 /*
