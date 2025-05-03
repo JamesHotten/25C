@@ -1,18 +1,18 @@
 ******************************************************************************
             TI ARM Clang Linker PC v4.0.2                      
 ******************************************************************************
->> Linked Sat May  3 17:33:04 2025
+>> Linked Sat May  3 21:10:55 2025
 
 OUTPUT FILE NAME:   <HIGHPREQ.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 000031e5
+ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 000032d9
 
 
 MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  FLASH                 00000000   00020000  000041f8  0001be08  R  X
-  SRAM                  20200000   00008000  00000baa  00007456  RW X
+  FLASH                 00000000   00020000  00004540  0001bac0  R  X
+  SRAM                  20200000   00008000  00000bb2  0000744e  RW X
   BCR_CONFIG            41c00000   000000ff  00000000  000000ff  R   
   BSL_CONFIG            41c00100   00000080  00000000  00000080  R   
 
@@ -21,14 +21,14 @@ SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    000041f8   000041f8    r-x
+00000000    00000000    00004540   00004540    r-x
   00000000    00000000    000000c0   000000c0    r-- .intvecs
-  000000c0    000000c0    000037f0   000037f0    r-x .text
-  000038b0    000038b0    00000908   00000908    r-- .rodata
-  000041b8    000041b8    00000040   00000040    r-- .cinit
-20200000    20200000    000009ac   00000000    rw-
-  20200000    20200000    00000986   00000000    rw- .bss
-  20200988    20200988    00000024   00000000    rw- .data
+  000000c0    000000c0    000038e0   000038e0    r-x .text
+  000039a0    000039a0    00000b60   00000b60    r-- .rodata
+  00004500    00004500    00000040   00000040    r-- .cinit
+20200000    20200000    000009b4   00000000    rw-
+  20200000    20200000    0000098e   00000000    rw- .bss
+  20200990    20200990    00000024   00000000    rw- .data
 20207e00    20207e00    00000200   00000000    rw-
   20207e00    20207e00    00000200   00000000    rw- .stack
 
@@ -41,253 +41,256 @@ section   page    origin      length       input sections
 .intvecs   0    00000000    000000c0     
                   00000000    000000c0     startup_mspm0g350x_ticlang.o (.intvecs)
 
-.text      0    000000c0    000037f0     
+.text      0    000000c0    000038e0     
                   000000c0    00000a48     libc.a : e_pow.c.obj (.text.pow)
                   00000b08    000003ac     timx_timer_mode_capture_duty_and_period.o (.text.OLEDSHOW)
                   00000eb4    000001ec     timx_timer_mode_capture_duty_and_period.o (.text.findV)
                   000010a0    00000192     libclang_rt.builtins.a : adddf3.S.obj (.text.adddf3_subdf3)
                   00001232    00000002                            : aeabi_div0.c.obj (.text.__aeabi_idiv0)
                   00001234    00000170     libc.a : e_sqrt.c.obj (.text.sqrt)
-                  000013a4    00000128     timx_timer_mode_capture_duty_and_period.o (.text.switchwave)
-                  000014cc    00000118     oled.o (.text.OLED_ShowChar)
-                  000015e4    0000010c     libclang_rt.builtins.a : divdf3.S.obj (.text.__divdf3)
-                  000016f0    000000fa     oled.o (.text.OLED_Init)
-                  000017ea    000000f6     oled.o (.text.OLED_ShowNum)
-                  000018e0    000000e8     driverlib.a : dl_timer.o (.text.DL_Timer_initTimerMode)
-                  000019c8    000000e4     libclang_rt.builtins.a : muldf3.S.obj (.text.__muldf3)
-                  00001aac    000000e0     driverlib.a : dl_timer.o (.text.DL_Timer_initCaptureCombinedMode)
-                  00001b8c    000000d8     libc.a : s_scalbn.c.obj (.text.scalbn)
-                  00001c64    000000d8     libclang_rt.builtins.a : addsf3.S.obj (.text)
-                  00001d3c    000000b8     timx_timer_mode_capture_duty_and_period.o (.text.main)
-                  00001df4    00000094     ti_msp_dl_config.o (.text.SYSCFG_DL_GPIO_init)
-                  00001e88    00000090     ti_msp_dl_config.o (.text.SYSCFG_DL_ADC12_0_init)
-                  00001f18    0000008c     timx_timer_mode_capture_duty_and_period.o (.text.GROUP1_IRQHandler)
-                  00001fa4    0000008c     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
-                  00002030    0000008c     libclang_rt.builtins.a : mulsf3.S.obj (.text.__mulsf3)
-                  000020bc    00000084     timx_timer_mode_capture_duty_and_period.o (.text.__NVIC_SetPriority)
-                  00002140    00000084     timx_timer_mode_capture_duty_and_period.o (.text.getdec)
-                  000021c4    00000082     libclang_rt.builtins.a : divsf3.S.obj (.text.__divsf3)
-                  00002246    00000002     --HOLE-- [fill = 0]
-                  00002248    0000007c     oled.o (.text.Send_Byte)
-                  000022c4    0000007c     libc.a : copy_decompress_lzss.c.obj (.text:decompress:lzss)
-                  00002340    00000074     libclang_rt.builtins.a : comparedf2.c.obj (.text.__gedf2)
-                  000023b4    0000000c                            : aeabi_memset.S.obj (.text.__aeabi_memclr)
-                  000023c0    00000074                            : truncdfsf2.S.obj (.text.__truncdfsf2)
-                  00002434    00000074     timx_timer_mode_capture_duty_and_period.o (.text.findbase)
-                  000024a8    00000070     oled.o (.text.OLED_ShowString)
-                  00002518    00000070     timx_timer_mode_capture_duty_and_period.o (.text.StartAdc)
-                  00002588    0000006c     timx_timer_mode_capture_duty_and_period.o (.text.BTSent)
-                  000025f4    0000006a     oled.o (.text.OLED_Clear)
-                  0000265e    00000002     --HOLE-- [fill = 0]
-                  00002660    00000068     timx_timer_mode_capture_duty_and_period.o (.text.TIMA1_IRQHandler)
-                  000026c8    00000068     libclang_rt.builtins.a : comparedf2.c.obj (.text.__ledf2)
-                  00002730    00000062                            : aeabi_dcmp.S.obj (.text.__aeabi_dcmp)
-                  00002792    00000002     --HOLE-- [fill = 0]
-                  00002794    00000062                            : aeabi_fcmp.S.obj (.text.__aeabi_fcmp)
-                  000027f6    00000002     --HOLE-- [fill = 0]
-                  000027f8    00000058     timx_timer_mode_capture_duty_and_period.o (.text.sendBluetoothData)
-                  00002850    00000056     libclang_rt.builtins.a : aeabi_idivmod.S.obj (.text.__aeabi_idivmod)
-                  000028a6    0000004e     oled.o (.text.OLED_WR_Byte)
-                  000028f4    0000004c     ti_msp_dl_config.o (.text.DL_ADC12_initSingleSample)
-                  00002940    0000004c     driverlib.a : dl_dma.o (.text.DL_DMA_initChannel)
-                  0000298c    0000004c     ti_msp_dl_config.o (.text.DL_UART_setBaudRateDivisor)
-                  000029d8    0000004c     ti_msp_dl_config.o (.text.SYSCFG_DL_TIMER_0_init)
-                  00002a24    0000004a     ti_msp_dl_config.o (.text.DL_ADC12_configConversionMem)
-                  00002a6e    00000002     --HOLE-- [fill = 0]
-                  00002a70    0000004a     libclang_rt.builtins.a : fixdfsi.S.obj (.text.__fixdfsi)
-                  00002aba    00000002     --HOLE-- [fill = 0]
-                  00002abc    00000048     driverlib.a : dl_uart.o (.text.DL_UART_init)
-                  00002b04    00000044     ti_msp_dl_config.o (.text.SYSCFG_DL_TIMER_1_init)
-                  00002b48    00000044     ti_msp_dl_config.o (.text.SYSCFG_DL_UART_0_init)
-                  00002b8c    00000040     driverlib.a : dl_adc12.o (.text.DL_ADC12_setClockConfig)
-                  00002bcc    00000040     libclang_rt.builtins.a : aeabi_uidivmod.S.obj (.text.__aeabi_uidivmod)
-                  00002c0c    00000040                            : extendsfdf2.S.obj (.text.__extendsfdf2)
-                  00002c4c    00000040     timx_timer_mode_capture_duty_and_period.o (.text.getlen)
-                  00002c8c    0000003c     oled.o (.text.OLED_Set_Pos)
-                  00002cc8    0000003c     ti_msp_dl_config.o (.text.SYSCFG_DL_init)
-                  00002d04    0000003c     libclang_rt.builtins.a : floatsisf.S.obj (.text.__floatsisf)
-                  00002d40    0000003c                            : comparesf2.S.obj (.text.__gtsf2)
-                  00002d7c    0000003c     libc.a : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
-                  00002db8    0000003a     libclang_rt.builtins.a : comparesf2.S.obj (.text.__eqsf2)
-                  00002df2    00000002     --HOLE-- [fill = 0]
-                  00002df4    0000003a                            : muldsi3.S.obj (.text.__muldsi3)
-                  00002e2e    00000002     --HOLE-- [fill = 0]
-                  00002e30    00000038     ti_msp_dl_config.o (.text.DL_Timer_setPublisherChanID)
-                  00002e68    00000038     oled.o (.text.I2C_Start)
-                  00002ea0    00000038     timx_timer_mode_capture_duty_and_period.o (.text.TIMG0_IRQHandler)
-                  00002ed8    00000038     libclang_rt.builtins.a : fixsfsi.S.obj (.text.__fixsfsi)
-                  00002f10    00000034     ti_msp_dl_config.o (.text.DL_GPIO_initDigitalInputFeatures)
-                  00002f44    00000034     ti_msp_dl_config.o (.text.SYSCFG_DL_CAPTURE_0_init)
-                  00002f78    00000032     libclang_rt.builtins.a : fixunssfsi.S.obj (.text.__fixunssfsi)
-                  00002faa    00000002     --HOLE-- [fill = 0]
-                  00002fac    00000030     ti_msp_dl_config.o (.text.DL_DMA_setTransferSize)
-                  00002fdc    00000030     oled.o (.text.I2C_Stop)
-                  0000300c    00000030     oled.o (.text.I2C_WaitAck)
-                  0000303c    00000030     oled.o (.text.oled_pow)
-                  0000306c    0000002c     ti_msp_dl_config.o (.text.DL_ADC12_setDMASamplesCnt)
-                  00003098    0000002c     ti_msp_dl_config.o (.text.SYSCFG_DL_DMA_CH0_init)
-                  000030c4    0000002c     timx_timer_mode_capture_duty_and_period.o (.text.__NVIC_EnableIRQ)
-                  000030f0    0000002c     libclang_rt.builtins.a : floatsidf.S.obj (.text.__floatsidf)
-                  0000311c    00000028     ti_msp_dl_config.o (.text.DL_Common_updateReg)
-                  00003144    00000028     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_setDestAddr)
-                  0000316c    00000028     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_setSrcAddr)
-                  00003194    00000028     ti_msp_dl_config.o (.text.DL_Timer_enableEvent)
-                  000031bc    00000028     libclang_rt.builtins.a : floatunsisf.S.obj (.text.__floatunsisf)
-                  000031e4    00000028     libc.a : boot_cortex_m.c.obj (.text:_c_int00_noargs)
-                  0000320c    00000026     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_enableChannel)
-                  00003232    00000002     --HOLE-- [fill = 0]
-                  00003234    00000024     timx_timer_mode_capture_duty_and_period.o (.text.DL_Interrupt_clearGroup)
-                  00003258    00000022     oled.o (.text.delay_ms)
-                  0000327a    00000002     --HOLE-- [fill = 0]
-                  0000327c    00000020     timx_timer_mode_capture_duty_and_period.o (.text.ADC0_IRQHandler)
-                  0000329c    00000020     ti_msp_dl_config.o (.text.DL_GPIO_initPeripheralInputFunction)
-                  000032bc    0000001e     ti_msp_dl_config.o (.text.DL_ADC12_setPowerDownMode)
-                  000032da    0000001e     ti_msp_dl_config.o (.text.DL_UART_setOversampling)
-                  000032f8    0000001e     ti_msp_dl_config.o (.text.SYSCFG_DL_SYSCTL_init)
-                  00003316    00000002     --HOLE-- [fill = 0]
-                  00003318    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_clearInterruptStatus)
-                  00003334    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableDMA)
-                  00003350    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableDMATrigger)
-                  0000336c    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableInterrupt)
-                  00003388    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_clearInterruptStatus)
-                  000033a4    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_enableInterrupt)
-                  000033c0    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_initPeripheralOutputFunction)
-                  000033dc    0000001c     timx_timer_mode_capture_duty_and_period.o (.text.DL_Interrupt_getPendingGroup)
-                  000033f8    0000001c     ti_msp_dl_config.o (.text.DL_SYSCTL_setSYSOSCFreq)
-                  00003414    0000001c     ti_msp_dl_config.o (.text.DL_Timer_enableInterrupt)
-                  00003430    0000001c     driverlib.a : dl_timer.o (.text.DL_Timer_setClockConfig)
-                  0000344c    0000001c     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_setCoreHaltBehavior)
-                  00003468    0000001a     ti_msp_dl_config.o (.text.DL_ADC12_setSubscriberChanID)
-                  00003482    00000002     --HOLE-- [fill = 0]
-                  00003484    00000018     ti_msp_dl_config.o (.text.DL_ADC12_enablePower)
-                  0000349c    00000018     ti_msp_dl_config.o (.text.DL_ADC12_reset)
-                  000034b4    00000018     ti_msp_dl_config.o (.text.DL_ADC12_setSampleTime0)
-                  000034cc    00000018     ti_msp_dl_config.o (.text.DL_GPIO_enableOutput)
-                  000034e4    00000018     ti_msp_dl_config.o (.text.DL_GPIO_enablePower)
-                  000034fc    00000018     ti_msp_dl_config.o (.text.DL_GPIO_initDigitalOutput)
-                  00003514    00000018     ti_msp_dl_config.o (.text.DL_GPIO_reset)
-                  0000352c    00000018     oled.o (.text.DL_GPIO_setPins)
-                  00003544    00000018     ti_msp_dl_config.o (.text.DL_GPIO_setPins)
-                  0000355c    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_setPins)
-                  00003574    00000018     ti_msp_dl_config.o (.text.DL_GPIO_setUpperPinsPolarity)
-                  0000358c    00000018     ti_msp_dl_config.o (.text.DL_SYSCTL_setBORThreshold)
-                  000035a4    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_clearInterruptStatus)
-                  000035bc    00000018     ti_msp_dl_config.o (.text.DL_Timer_enablePower)
-                  000035d4    00000018     ti_msp_dl_config.o (.text.DL_Timer_reset)
-                  000035ec    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_setLoadValue)
-                  00003604    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_startCounter)
-                  0000361c    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_stopCounter)
-                  00003634    00000018     ti_msp_dl_config.o (.text.DL_UART_enablePower)
-                  0000364c    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_isBusy)
-                  00003664    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_isTXFIFOEmpty)
-                  0000367c    00000018     ti_msp_dl_config.o (.text.DL_UART_reset)
-                  00003694    00000016     ti_msp_dl_config.o (.text.DL_ADC12_enableConversions)
-                  000036aa    00000016     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_readPins)
-                  000036c0    00000016     ti_msp_dl_config.o (.text.DL_UART_enable)
-                  000036d6    00000016     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_transmitData)
-                  000036ec    00000014     oled.o (.text.DL_GPIO_clearPins)
-                  00003700    00000014     ti_msp_dl_config.o (.text.DL_GPIO_clearPins)
-                  00003714    00000014     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_clearPins)
-                  00003728    00000014     ti_msp_dl_config.o (.text.DL_SYSCTL_disableSYSPLL)
-                  0000373c    00000014     ti_msp_dl_config.o (.text.DL_Timer_enableClock)
-                  00003750    00000014     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_getLoadValue)
-                  00003764    00000012     timx_timer_mode_capture_duty_and_period.o (.text.DL_ADC12_getPendingInterrupt)
-                  00003776    00000012     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_getPendingInterrupt)
-                  00003788    00000012     driverlib.a : dl_uart.o (.text.DL_UART_setClockConfig)
-                  0000379a    00000012     libc.a : memcpy16.S.obj (.text:TI_memcpy_small)
-                  000037ac    00000012            : copy_decompress_none.c.obj (.text:decompress:none)
-                  000037be    00000002     --HOLE-- [fill = 0]
-                  000037c0    00000010     ti_msp_dl_config.o (.text.DL_SYSCTL_disableHFXT)
-                  000037d0    00000010     libc.a : copy_zero_init.c.obj (.text:decompress:ZI)
-                  000037e0    0000000e            : memset16.S.obj (.text:TI_memset_small)
-                  000037ee    0000000a     driverlib.a : dl_common.o (.text.DL_Common_delayCycles)
-                  000037f8    0000000a     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_0)
-                  00003802    00000002     --HOLE-- [fill = 0]
-                  00003804    00000010     libclang_rt.builtins.a : muldf3.S.obj (.tramp.__aeabi_dmul.1)
-                  00003814    0000000a     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_1)
-                  0000381e    0000000a            : e_pow.c.obj (.text.OUTLINED_FUNCTION_6)
-                  00003828    00000008            : e_pow.c.obj (.text.OUTLINED_FUNCTION_2)
-                  00003830    00000010     libclang_rt.builtins.a : adddf3.S.obj (.tramp.__aeabi_dsub.1)
-                  00003840    00000008     ti_msp_dl_config.o (.text.SYSCFG_DL_DMA_init)
-                  00003848    00000008     libc.a : aeabi_portable.c.obj (.text.__aeabi_errno_addr)
-                  00003850    00000008     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.text.__aeabi_memcpy)
-                  00003858    00000006     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_3)
-                  0000385e    00000002     --HOLE-- [fill = 0]
-                  00003860    00000010     libclang_rt.builtins.a : adddf3.S.obj (.tramp.__aeabi_dadd.1)
-                  00003870    00000006     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_4)
-                  00003876    00000006            : e_pow.c.obj (.text.OUTLINED_FUNCTION_5)
-                  0000387c    00000006            : exit.c.obj (.text:abort)
-                  00003882    00000004     startup_mspm0g350x_ticlang.o (.text.Default_Handler)
-                  00003886    00000004     libsysbm.a : hostexit.c.obj (.text.HOSTexit)
-                  0000388a    00000004     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_10)
-                  0000388e    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_7)
-                  00003892    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_8)
-                  00003896    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_9)
-                  0000389a    00000004     startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
-                  0000389e    00000004     libc.a : pre_init.c.obj (.text._system_pre_init)
-                  000038a2    0000000e     --HOLE-- [fill = 0]
+                  000013a4    00000160     timx_timer_mode_capture_duty_and_period.o (.text.BT_send_Src)
+                  00001504    00000128     timx_timer_mode_capture_duty_and_period.o (.text.switchwave)
+                  0000162c    00000118     oled.o (.text.OLED_ShowChar)
+                  00001744    0000010c     libclang_rt.builtins.a : divdf3.S.obj (.text.__divdf3)
+                  00001850    000000fa     oled.o (.text.OLED_Init)
+                  0000194a    000000f6     oled.o (.text.OLED_ShowNum)
+                  00001a40    000000e8     driverlib.a : dl_timer.o (.text.DL_Timer_initTimerMode)
+                  00001b28    000000e4     libclang_rt.builtins.a : muldf3.S.obj (.text.__muldf3)
+                  00001c0c    000000e0     driverlib.a : dl_timer.o (.text.DL_Timer_initCaptureCombinedMode)
+                  00001cec    000000d8     libc.a : s_scalbn.c.obj (.text.scalbn)
+                  00001dc4    000000d8     libclang_rt.builtins.a : addsf3.S.obj (.text)
+                  00001e9c    000000b8     timx_timer_mode_capture_duty_and_period.o (.text.main)
+                  00001f54    00000094     ti_msp_dl_config.o (.text.SYSCFG_DL_GPIO_init)
+                  00001fe8    00000090     ti_msp_dl_config.o (.text.SYSCFG_DL_ADC12_0_init)
+                  00002078    0000008c     timx_timer_mode_capture_duty_and_period.o (.text.GROUP1_IRQHandler)
+                  00002104    0000008c     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
+                  00002190    0000008c     libclang_rt.builtins.a : mulsf3.S.obj (.text.__mulsf3)
+                  0000221c    00000084     timx_timer_mode_capture_duty_and_period.o (.text.__NVIC_SetPriority)
+                  000022a0    00000084     timx_timer_mode_capture_duty_and_period.o (.text.getdec)
+                  00002324    00000082     libclang_rt.builtins.a : divsf3.S.obj (.text.__divsf3)
+                  000023a6    00000002     --HOLE-- [fill = 0]
+                  000023a8    0000007c     oled.o (.text.Send_Byte)
+                  00002424    0000007c     libc.a : copy_decompress_lzss.c.obj (.text:decompress:lzss)
+                  000024a0    00000074     libclang_rt.builtins.a : comparedf2.c.obj (.text.__gedf2)
+                  00002514    0000000c                            : aeabi_memset.S.obj (.text.__aeabi_memclr)
+                  00002520    00000074                            : truncdfsf2.S.obj (.text.__truncdfsf2)
+                  00002594    00000074     timx_timer_mode_capture_duty_and_period.o (.text.findbase)
+                  00002608    00000070     oled.o (.text.OLED_ShowString)
+                  00002678    00000070     timx_timer_mode_capture_duty_and_period.o (.text.StartAdc)
+                  000026e8    0000006a     oled.o (.text.OLED_Clear)
+                  00002752    00000002     --HOLE-- [fill = 0]
+                  00002754    00000068     timx_timer_mode_capture_duty_and_period.o (.text.TIMA1_IRQHandler)
+                  000027bc    00000068     libclang_rt.builtins.a : comparedf2.c.obj (.text.__ledf2)
+                  00002824    00000062                            : aeabi_dcmp.S.obj (.text.__aeabi_dcmp)
+                  00002886    00000002     --HOLE-- [fill = 0]
+                  00002888    00000062                            : aeabi_fcmp.S.obj (.text.__aeabi_fcmp)
+                  000028ea    00000002     --HOLE-- [fill = 0]
+                  000028ec    00000058     timx_timer_mode_capture_duty_and_period.o (.text.sendBluetoothData)
+                  00002944    00000056     libclang_rt.builtins.a : aeabi_idivmod.S.obj (.text.__aeabi_idivmod)
+                  0000299a    0000004e     oled.o (.text.OLED_WR_Byte)
+                  000029e8    0000004c     ti_msp_dl_config.o (.text.DL_ADC12_initSingleSample)
+                  00002a34    0000004c     driverlib.a : dl_dma.o (.text.DL_DMA_initChannel)
+                  00002a80    0000004c     ti_msp_dl_config.o (.text.DL_UART_setBaudRateDivisor)
+                  00002acc    0000004c     ti_msp_dl_config.o (.text.SYSCFG_DL_TIMER_0_init)
+                  00002b18    0000004a     ti_msp_dl_config.o (.text.DL_ADC12_configConversionMem)
+                  00002b62    00000002     --HOLE-- [fill = 0]
+                  00002b64    0000004a     libclang_rt.builtins.a : fixdfsi.S.obj (.text.__fixdfsi)
+                  00002bae    00000002     --HOLE-- [fill = 0]
+                  00002bb0    00000048     driverlib.a : dl_uart.o (.text.DL_UART_init)
+                  00002bf8    00000044     ti_msp_dl_config.o (.text.SYSCFG_DL_TIMER_1_init)
+                  00002c3c    00000044     ti_msp_dl_config.o (.text.SYSCFG_DL_UART_0_init)
+                  00002c80    00000040     driverlib.a : dl_adc12.o (.text.DL_ADC12_setClockConfig)
+                  00002cc0    00000040     libclang_rt.builtins.a : aeabi_uidivmod.S.obj (.text.__aeabi_uidivmod)
+                  00002d00    00000040                            : extendsfdf2.S.obj (.text.__extendsfdf2)
+                  00002d40    00000040     timx_timer_mode_capture_duty_and_period.o (.text.getlen)
+                  00002d80    0000003c     oled.o (.text.OLED_Set_Pos)
+                  00002dbc    0000003c     ti_msp_dl_config.o (.text.SYSCFG_DL_init)
+                  00002df8    0000003c     libclang_rt.builtins.a : floatsisf.S.obj (.text.__floatsisf)
+                  00002e34    0000003c                            : comparesf2.S.obj (.text.__gtsf2)
+                  00002e70    0000003c     libc.a : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
+                  00002eac    0000003a     libclang_rt.builtins.a : comparesf2.S.obj (.text.__eqsf2)
+                  00002ee6    00000002     --HOLE-- [fill = 0]
+                  00002ee8    0000003a                            : muldsi3.S.obj (.text.__muldsi3)
+                  00002f22    00000002     --HOLE-- [fill = 0]
+                  00002f24    00000038     ti_msp_dl_config.o (.text.DL_Timer_setPublisherChanID)
+                  00002f5c    00000038     oled.o (.text.I2C_Start)
+                  00002f94    00000038     timx_timer_mode_capture_duty_and_period.o (.text.TIMG0_IRQHandler)
+                  00002fcc    00000038     libclang_rt.builtins.a : fixsfsi.S.obj (.text.__fixsfsi)
+                  00003004    00000034     ti_msp_dl_config.o (.text.DL_GPIO_initDigitalInputFeatures)
+                  00003038    00000034     ti_msp_dl_config.o (.text.SYSCFG_DL_CAPTURE_0_init)
+                  0000306c    00000032     libclang_rt.builtins.a : fixunssfsi.S.obj (.text.__fixunssfsi)
+                  0000309e    00000002     --HOLE-- [fill = 0]
+                  000030a0    00000030     ti_msp_dl_config.o (.text.DL_DMA_setTransferSize)
+                  000030d0    00000030     oled.o (.text.I2C_Stop)
+                  00003100    00000030     oled.o (.text.I2C_WaitAck)
+                  00003130    00000030     oled.o (.text.oled_pow)
+                  00003160    0000002c     ti_msp_dl_config.o (.text.DL_ADC12_setDMASamplesCnt)
+                  0000318c    0000002c     ti_msp_dl_config.o (.text.SYSCFG_DL_DMA_CH0_init)
+                  000031b8    0000002c     timx_timer_mode_capture_duty_and_period.o (.text.__NVIC_EnableIRQ)
+                  000031e4    0000002c     libclang_rt.builtins.a : floatsidf.S.obj (.text.__floatsidf)
+                  00003210    00000028     ti_msp_dl_config.o (.text.DL_Common_updateReg)
+                  00003238    00000028     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_setDestAddr)
+                  00003260    00000028     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_setSrcAddr)
+                  00003288    00000028     ti_msp_dl_config.o (.text.DL_Timer_enableEvent)
+                  000032b0    00000028     libclang_rt.builtins.a : floatunsisf.S.obj (.text.__floatunsisf)
+                  000032d8    00000028     libc.a : boot_cortex_m.c.obj (.text:_c_int00_noargs)
+                  00003300    00000026     timx_timer_mode_capture_duty_and_period.o (.text.DL_DMA_enableChannel)
+                  00003326    00000002     --HOLE-- [fill = 0]
+                  00003328    00000024     timx_timer_mode_capture_duty_and_period.o (.text.DL_Interrupt_clearGroup)
+                  0000334c    00000022     oled.o (.text.delay_ms)
+                  0000336e    00000002     --HOLE-- [fill = 0]
+                  00003370    00000020     timx_timer_mode_capture_duty_and_period.o (.text.ADC0_IRQHandler)
+                  00003390    00000020     ti_msp_dl_config.o (.text.DL_GPIO_initPeripheralInputFunction)
+                  000033b0    0000001e     ti_msp_dl_config.o (.text.DL_ADC12_setPowerDownMode)
+                  000033ce    0000001e     ti_msp_dl_config.o (.text.DL_UART_setOversampling)
+                  000033ec    0000001e     ti_msp_dl_config.o (.text.SYSCFG_DL_SYSCTL_init)
+                  0000340a    00000002     --HOLE-- [fill = 0]
+                  0000340c    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_clearInterruptStatus)
+                  00003428    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableDMA)
+                  00003444    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableDMATrigger)
+                  00003460    0000001c     ti_msp_dl_config.o (.text.DL_ADC12_enableInterrupt)
+                  0000347c    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_clearInterruptStatus)
+                  00003498    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_enableInterrupt)
+                  000034b4    0000001c     ti_msp_dl_config.o (.text.DL_GPIO_initPeripheralOutputFunction)
+                  000034d0    0000001c     timx_timer_mode_capture_duty_and_period.o (.text.DL_Interrupt_getPendingGroup)
+                  000034ec    0000001c     ti_msp_dl_config.o (.text.DL_SYSCTL_setSYSOSCFreq)
+                  00003508    0000001c     ti_msp_dl_config.o (.text.DL_Timer_enableInterrupt)
+                  00003524    0000001c     driverlib.a : dl_timer.o (.text.DL_Timer_setClockConfig)
+                  00003540    0000001c     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_setCoreHaltBehavior)
+                  0000355c    0000001a     ti_msp_dl_config.o (.text.DL_ADC12_setSubscriberChanID)
+                  00003576    00000002     --HOLE-- [fill = 0]
+                  00003578    00000018     ti_msp_dl_config.o (.text.DL_ADC12_enablePower)
+                  00003590    00000018     ti_msp_dl_config.o (.text.DL_ADC12_reset)
+                  000035a8    00000018     ti_msp_dl_config.o (.text.DL_ADC12_setSampleTime0)
+                  000035c0    00000018     ti_msp_dl_config.o (.text.DL_GPIO_enableOutput)
+                  000035d8    00000018     ti_msp_dl_config.o (.text.DL_GPIO_enablePower)
+                  000035f0    00000018     ti_msp_dl_config.o (.text.DL_GPIO_initDigitalOutput)
+                  00003608    00000018     ti_msp_dl_config.o (.text.DL_GPIO_reset)
+                  00003620    00000018     oled.o (.text.DL_GPIO_setPins)
+                  00003638    00000018     ti_msp_dl_config.o (.text.DL_GPIO_setPins)
+                  00003650    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_setPins)
+                  00003668    00000018     ti_msp_dl_config.o (.text.DL_GPIO_setUpperPinsPolarity)
+                  00003680    00000018     ti_msp_dl_config.o (.text.DL_SYSCTL_setBORThreshold)
+                  00003698    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_clearInterruptStatus)
+                  000036b0    00000018     ti_msp_dl_config.o (.text.DL_Timer_enablePower)
+                  000036c8    00000018     ti_msp_dl_config.o (.text.DL_Timer_reset)
+                  000036e0    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_setLoadValue)
+                  000036f8    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_startCounter)
+                  00003710    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_stopCounter)
+                  00003728    00000018     ti_msp_dl_config.o (.text.DL_UART_enablePower)
+                  00003740    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_isBusy)
+                  00003758    00000018     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_isTXFIFOEmpty)
+                  00003770    00000018     ti_msp_dl_config.o (.text.DL_UART_reset)
+                  00003788    00000016     ti_msp_dl_config.o (.text.DL_ADC12_enableConversions)
+                  0000379e    00000016     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_readPins)
+                  000037b4    00000016     ti_msp_dl_config.o (.text.DL_UART_enable)
+                  000037ca    00000016     timx_timer_mode_capture_duty_and_period.o (.text.DL_UART_transmitData)
+                  000037e0    00000014     oled.o (.text.DL_GPIO_clearPins)
+                  000037f4    00000014     ti_msp_dl_config.o (.text.DL_GPIO_clearPins)
+                  00003808    00000014     timx_timer_mode_capture_duty_and_period.o (.text.DL_GPIO_clearPins)
+                  0000381c    00000014     ti_msp_dl_config.o (.text.DL_SYSCTL_disableSYSPLL)
+                  00003830    00000014     ti_msp_dl_config.o (.text.DL_Timer_enableClock)
+                  00003844    00000014     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_getLoadValue)
+                  00003858    00000012     timx_timer_mode_capture_duty_and_period.o (.text.DL_ADC12_getPendingInterrupt)
+                  0000386a    00000012     timx_timer_mode_capture_duty_and_period.o (.text.DL_Timer_getPendingInterrupt)
+                  0000387c    00000012     driverlib.a : dl_uart.o (.text.DL_UART_setClockConfig)
+                  0000388e    00000012     libc.a : memcpy16.S.obj (.text:TI_memcpy_small)
+                  000038a0    00000012            : copy_decompress_none.c.obj (.text:decompress:none)
+                  000038b2    00000002     --HOLE-- [fill = 0]
+                  000038b4    00000010     ti_msp_dl_config.o (.text.DL_SYSCTL_disableHFXT)
+                  000038c4    00000010     libc.a : copy_zero_init.c.obj (.text:decompress:ZI)
+                  000038d4    0000000e            : memset16.S.obj (.text:TI_memset_small)
+                  000038e2    0000000a     driverlib.a : dl_common.o (.text.DL_Common_delayCycles)
+                  000038ec    0000000a     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_0)
+                  000038f6    00000002     --HOLE-- [fill = 0]
+                  000038f8    00000010     libclang_rt.builtins.a : muldf3.S.obj (.tramp.__aeabi_dmul.1)
+                  00003908    0000000a     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_1)
+                  00003912    0000000a            : e_pow.c.obj (.text.OUTLINED_FUNCTION_6)
+                  0000391c    00000008            : e_pow.c.obj (.text.OUTLINED_FUNCTION_2)
+                  00003924    00000010     libclang_rt.builtins.a : adddf3.S.obj (.tramp.__aeabi_dsub.1)
+                  00003934    00000008     ti_msp_dl_config.o (.text.SYSCFG_DL_DMA_init)
+                  0000393c    00000008     libc.a : aeabi_portable.c.obj (.text.__aeabi_errno_addr)
+                  00003944    00000008     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.text.__aeabi_memcpy)
+                  0000394c    00000006     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_3)
+                  00003952    00000002     --HOLE-- [fill = 0]
+                  00003954    00000010     libclang_rt.builtins.a : adddf3.S.obj (.tramp.__aeabi_dadd.1)
+                  00003964    00000006     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_4)
+                  0000396a    00000006            : e_pow.c.obj (.text.OUTLINED_FUNCTION_5)
+                  00003970    00000006            : exit.c.obj (.text:abort)
+                  00003976    00000004     startup_mspm0g350x_ticlang.o (.text.Default_Handler)
+                  0000397a    00000004     libsysbm.a : hostexit.c.obj (.text.HOSTexit)
+                  0000397e    00000004     libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_10)
+                  00003982    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_7)
+                  00003986    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_8)
+                  0000398a    00000004            : e_pow.c.obj (.text.OUTLINED_FUNCTION_9)
+                  0000398e    00000004     startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
+                  00003992    00000004     libc.a : pre_init.c.obj (.text._system_pre_init)
+                  00003996    0000000a     --HOLE-- [fill = 0]
 
-.cinit     0    000041b8    00000040     
-                  000041b8    00000018     (.cinit..data.load) [load image, compression = lzss]
-                  000041d0    0000000c     (__TI_handler_table)
-                  000041dc    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  000041e4    00000010     (__TI_cinit_table)
-                  000041f4    00000004     --HOLE-- [fill = 0]
+.cinit     0    00004500    00000040     
+                  00004500    00000018     (.cinit..data.load) [load image, compression = lzss]
+                  00004518    0000000c     (__TI_handler_table)
+                  00004524    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  0000452c    00000010     (__TI_cinit_table)
+                  0000453c    00000004     --HOLE-- [fill = 0]
 
-.rodata    0    000038b0    00000908     
-                  000038b0    000005f0     oled.o (.rodata.asc2_1608)
-                  00003ea0    00000228     oled.o (.rodata.asc2_0806)
-                  000040c8    00000030     libc.a : e_pow.c.obj (.rodata.cst16)
-                  000040f8    00000018     ti_msp_dl_config.o (.rodata.gDMA_CH0Config)
-                  00004110    00000014     ti_msp_dl_config.o (.rodata.gTIMER_0TimerConfig)
-                  00004124    00000014     ti_msp_dl_config.o (.rodata.gTIMER_1TimerConfig)
-                  00004138    00000010     ti_msp_dl_config.o (.rodata.gCAPTURE_0CaptureConfig)
-                  00004148    0000000c     driverlib.a : dl_timer.o (.rodata..Lswitch.table.DL_Timer_initCaptureCombinedMode.1)
-                  00004154    0000000c                 : dl_timer.o (.rodata..Lswitch.table.DL_Timer_initCompareMode)
-                  00004160    0000000a     ti_msp_dl_config.o (.rodata.gUART_0Config)
-                  0000416a    00000009     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.13803488720744023916.1)
-                  00004173    00000001     --HOLE-- [fill = 0]
-                  00004174    00000008     ti_msp_dl_config.o (.rodata.gADC12_0ClockConfig)
-                  0000417c    00000007     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.9943013036504090371.1)
-                  00004183    00000006     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.11435234700370505290.1)
-                  00004189    00000006     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.7042939706059272442.1)
-                  0000418f    00000005     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.10031608105938973274.1)
-                  00004194    00000005     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.10175774738103354559.1)
-                  00004199    00000004     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.15654829570421964417.1)
-                  0000419d    00000004     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.7861310084226465341.1)
-                  000041a1    00000003     ti_msp_dl_config.o (.rodata.gCAPTURE_0ClockConfig)
-                  000041a4    00000003     ti_msp_dl_config.o (.rodata.gTIMER_0ClockConfig)
-                  000041a7    00000003     ti_msp_dl_config.o (.rodata.gTIMER_1ClockConfig)
-                  000041aa    00000003     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.465695279775325175.1)
-                  000041ad    00000003     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.6003870495209471045.1)
-                  000041b0    00000002     ti_msp_dl_config.o (.rodata.gUART_0ClockConfig)
-                  000041b2    00000006     --HOLE-- [fill = 0]
+.rodata    0    000039a0    00000b60     
+                  000039a0    000005f0     oled.o (.rodata.asc2_1608)
+                  00003f90    00000228     oled.o (.rodata.asc2_0806)
+                  000041b8    000000c8     timx_timer_mode_capture_duty_and_period.o (.rodata.sin_table)
+                  00004280    000000c8     timx_timer_mode_capture_duty_and_period.o (.rodata.square_table)
+                  00004348    000000c8     timx_timer_mode_capture_duty_and_period.o (.rodata.triangle_table)
+                  00004410    00000030     libc.a : e_pow.c.obj (.rodata.cst16)
+                  00004440    00000018     ti_msp_dl_config.o (.rodata.gDMA_CH0Config)
+                  00004458    00000014     ti_msp_dl_config.o (.rodata.gTIMER_0TimerConfig)
+                  0000446c    00000014     ti_msp_dl_config.o (.rodata.gTIMER_1TimerConfig)
+                  00004480    00000010     ti_msp_dl_config.o (.rodata.gCAPTURE_0CaptureConfig)
+                  00004490    0000000c     driverlib.a : dl_timer.o (.rodata..Lswitch.table.DL_Timer_initCaptureCombinedMode.1)
+                  0000449c    0000000c                 : dl_timer.o (.rodata..Lswitch.table.DL_Timer_initCompareMode)
+                  000044a8    0000000a     ti_msp_dl_config.o (.rodata.gUART_0Config)
+                  000044b2    00000009     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.13803488720744023916.1)
+                  000044bb    00000001     --HOLE-- [fill = 0]
+                  000044bc    00000008     ti_msp_dl_config.o (.rodata.gADC12_0ClockConfig)
+                  000044c4    00000007     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.9943013036504090371.1)
+                  000044cb    00000006     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.11435234700370505290.1)
+                  000044d1    00000006     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.7042939706059272442.1)
+                  000044d7    00000005     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.10031608105938973274.1)
+                  000044dc    00000005     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.10175774738103354559.1)
+                  000044e1    00000004     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.15654829570421964417.1)
+                  000044e5    00000004     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.7861310084226465341.1)
+                  000044e9    00000003     ti_msp_dl_config.o (.rodata.gCAPTURE_0ClockConfig)
+                  000044ec    00000003     ti_msp_dl_config.o (.rodata.gTIMER_0ClockConfig)
+                  000044ef    00000003     ti_msp_dl_config.o (.rodata.gTIMER_1ClockConfig)
+                  000044f2    00000003     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.465695279775325175.1)
+                  000044f5    00000003     timx_timer_mode_capture_duty_and_period.o (.rodata.str1.6003870495209471045.1)
+                  000044f8    00000002     ti_msp_dl_config.o (.rodata.gUART_0ClockConfig)
+                  000044fa    00000006     --HOLE-- [fill = 0]
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
 
 .binit     0    00000000    00000000     
 
-.bss       0    20200000    00000986     UNINITIALIZED
+.bss       0    20200000    0000098e     UNINITIALIZED
                   20200000    00000800     (.common:gADCSamples)
                   20200800    000000bc     (.common:gTIMER_0Backup)
                   202008bc    000000bc     (.common:gTIMER_1Backup)
-                  20200978    00000007     (.common:USART_TX_BUF)
-                  2020097f    00000001     (.common:gCheckADC)
-                  20200980    00000004     (.common:freq_pin)
-                  20200984    00000002     (.common:waveform)
+                  20200978    0000000f     (.common:USART_TX_BUF_SRC)
+                  20200987    00000001     (.common:gCheckADC)
+                  20200988    00000004     (.common:freq_pin)
+                  2020098c    00000002     (.common:waveform)
 
-.data      0    20200988    00000024     UNINITIALIZED
-                  20200988    00000006     timx_timer_mode_capture_duty_and_period.o (.data.str)
-                  2020098e    00000001     timx_timer_mode_capture_duty_and_period.o (.data.ledState)
-                  2020098f    00000001     timx_timer_mode_capture_duty_and_period.o (.data.multipler)
-                  20200990    00000004     libc.a : aeabi_portable.c.obj (.data.__aeabi_errno)
-                  20200994    00000004     timx_timer_mode_capture_duty_and_period.o (.data.adc_fs)
-                  20200998    00000004     timx_timer_mode_capture_duty_and_period.o (.data.avg_max)
-                  2020099c    00000004     timx_timer_mode_capture_duty_and_period.o (.data.avg_min)
-                  202009a0    00000004     timx_timer_mode_capture_duty_and_period.o (.data.count)
-                  202009a4    00000004     timx_timer_mode_capture_duty_and_period.o (.data.point)
-                  202009a8    00000004     timx_timer_mode_capture_duty_and_period.o (.data.vppadc)
+.data      0    20200990    00000024     UNINITIALIZED
+                  20200990    00000006     timx_timer_mode_capture_duty_and_period.o (.data.str)
+                  20200996    00000001     timx_timer_mode_capture_duty_and_period.o (.data.ledState)
+                  20200997    00000001     timx_timer_mode_capture_duty_and_period.o (.data.multipler)
+                  20200998    00000004     libc.a : aeabi_portable.c.obj (.data.__aeabi_errno)
+                  2020099c    00000004     timx_timer_mode_capture_duty_and_period.o (.data.adc_fs)
+                  202009a0    00000004     timx_timer_mode_capture_duty_and_period.o (.data.avg_max)
+                  202009a4    00000004     timx_timer_mode_capture_duty_and_period.o (.data.avg_min)
+                  202009a8    00000004     timx_timer_mode_capture_duty_and_period.o (.data.count)
+                  202009ac    00000004     timx_timer_mode_capture_duty_and_period.o (.data.point)
+                  202009b0    00000004     timx_timer_mode_capture_duty_and_period.o (.data.vppadc)
 
 .stack     0    20207e00    00000200     UNINITIALIZED
                   20207e00    00000004     libc.a : boot_cortex_m.c.obj (.stack)
@@ -304,12 +307,12 @@ MODULE SUMMARY
        Module                                      code    ro data   rw data
        ------                                      ----    -------   -------
     .\
-       timx_timer_mode_capture_duty_and_period.o   3538    52        2094   
+       timx_timer_mode_capture_duty_and_period.o   3782    652       2102   
        oled.o                                      1534    2072      0      
        ti_msp_dl_config.o                          2170    109       376    
        startup_mspm0g350x_ticlang.o                8       192       0      
     +--+-------------------------------------------+-------+---------+---------+
-       Total:                                      7250    2425      2470   
+       Total:                                      7494    3025      2478   
                                                                             
     C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/lib/ticlang/m0p/mspm0g1x0x_g3x0x/driverlib.a
        dl_timer.o                                  484     24        0      
@@ -373,19 +376,19 @@ MODULE SUMMARY
        Stack:                                      0       0         512    
        Linker Generated:                           0       60        0      
     +--+-------------------------------------------+-------+---------+---------+
-       Grand Total:                                14274   2557      2986   
+       Grand Total:                                14518   3157      2994   
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 000041e4 records: 2, size/record: 8, table size: 16
-	.data: load addr=000041b8, load size=00000018 bytes, run addr=20200988, run size=00000024 bytes, compression=lzss
-	.bss: load addr=000041dc, load size=00000008 bytes, run addr=20200000, run size=00000986 bytes, compression=zero_init
+__TI_cinit_table @ 0000452c records: 2, size/record: 8, table size: 16
+	.data: load addr=00004500, load size=00000018 bytes, run addr=20200990, run size=00000024 bytes, compression=lzss
+	.bss: load addr=00004524, load size=00000008 bytes, run addr=20200000, run size=0000098e bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 000041d0 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 00004518 records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 	index: 2, handler: __TI_zero_init
@@ -397,19 +400,19 @@ callee name               trampoline name
    callee addr  tramp addr   call addr  call info
 --------------  -----------  ---------  ----------------
 __aeabi_dmul              $Tramp$TT$L$PI$$__aeabi_dmul
-   000019c9     00003804     00003800   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_0)
-                             0000381c          : e_pow.c.obj (.text.OUTLINED_FUNCTION_1)
-                             00003826          : e_pow.c.obj (.text.OUTLINED_FUNCTION_6)
-                             00003874          : e_pow.c.obj (.text.OUTLINED_FUNCTION_4)
-                             0000387a          : e_pow.c.obj (.text.OUTLINED_FUNCTION_5)
-                             00003894          : e_pow.c.obj (.text.OUTLINED_FUNCTION_8)
+   00001b29     000038f8     000038f4   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_0)
+                             00003910          : e_pow.c.obj (.text.OUTLINED_FUNCTION_1)
+                             0000391a          : e_pow.c.obj (.text.OUTLINED_FUNCTION_6)
+                             00003968          : e_pow.c.obj (.text.OUTLINED_FUNCTION_4)
+                             0000396e          : e_pow.c.obj (.text.OUTLINED_FUNCTION_5)
+                             00003988          : e_pow.c.obj (.text.OUTLINED_FUNCTION_8)
 __aeabi_dsub              $Tramp$TT$L$PI$$__aeabi_dsub
-   000010a1     00003830     0000382e   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_2)
+   000010a1     00003924     00003922   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_2)
 __aeabi_dadd              $Tramp$TT$L$PI$$__aeabi_dadd
-   000010ab     00003860     0000385c   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_3)
-                             0000388c          : e_pow.c.obj (.text.OUTLINED_FUNCTION_10)
-                             00003890          : e_pow.c.obj (.text.OUTLINED_FUNCTION_7)
-                             00003898          : e_pow.c.obj (.text.OUTLINED_FUNCTION_9)
+   000010ab     00003954     00003950   libc.a : e_pow.c.obj (.text.OUTLINED_FUNCTION_3)
+                             00003980          : e_pow.c.obj (.text.OUTLINED_FUNCTION_10)
+                             00003984          : e_pow.c.obj (.text.OUTLINED_FUNCTION_7)
+                             0000398c          : e_pow.c.obj (.text.OUTLINED_FUNCTION_9)
 
 [3 trampolines]
 [11 trampoline calls]
@@ -419,75 +422,75 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                            
 -------   ----                            
-0000327d  ADC0_IRQHandler                 
-00003883  ADC1_IRQHandler                 
-00003883  AES_IRQHandler                  
-00002589  BTSent                          
-00003886  C$$EXIT                         
-00003883  CANFD0_IRQHandler               
-00003883  DAC0_IRQHandler                 
-00002b8d  DL_ADC12_setClockConfig         
-000037ef  DL_Common_delayCycles           
-00002941  DL_DMA_initChannel              
-00001aad  DL_Timer_initCaptureCombinedMode
-000018e1  DL_Timer_initTimerMode          
-00003431  DL_Timer_setClockConfig         
-00002abd  DL_UART_init                    
-00003789  DL_UART_setClockConfig          
-00003883  DMA_IRQHandler                  
-00003883  Default_Handler                 
-00003883  GROUP0_IRQHandler               
-00001f19  GROUP1_IRQHandler               
-00003887  HOSTexit                        
-00003883  HardFault_Handler               
-00003883  I2C0_IRQHandler                 
-00003883  I2C1_IRQHandler                 
-00002e69  I2C_Start                       
-00002fdd  I2C_Stop                        
-0000300d  I2C_WaitAck                     
-00003883  NMI_Handler                     
+00003371  ADC0_IRQHandler                 
+00003977  ADC1_IRQHandler                 
+00003977  AES_IRQHandler                  
+000013a5  BT_send_Src                     
+0000397a  C$$EXIT                         
+00003977  CANFD0_IRQHandler               
+00003977  DAC0_IRQHandler                 
+00002c81  DL_ADC12_setClockConfig         
+000038e3  DL_Common_delayCycles           
+00002a35  DL_DMA_initChannel              
+00001c0d  DL_Timer_initCaptureCombinedMode
+00001a41  DL_Timer_initTimerMode          
+00003525  DL_Timer_setClockConfig         
+00002bb1  DL_UART_init                    
+0000387d  DL_UART_setClockConfig          
+00003977  DMA_IRQHandler                  
+00003977  Default_Handler                 
+00003977  GROUP0_IRQHandler               
+00002079  GROUP1_IRQHandler               
+0000397b  HOSTexit                        
+00003977  HardFault_Handler               
+00003977  I2C0_IRQHandler                 
+00003977  I2C1_IRQHandler                 
+00002f5d  I2C_Start                       
+000030d1  I2C_Stop                        
+00003101  I2C_WaitAck                     
+00003977  NMI_Handler                     
 00000b09  OLEDSHOW                        
-000025f5  OLED_Clear                      
-000016f1  OLED_Init                       
-00002c8d  OLED_Set_Pos                    
-000014cd  OLED_ShowChar                   
-000017eb  OLED_ShowNum                    
-000024a9  OLED_ShowString                 
-000028a7  OLED_WR_Byte                    
-00003883  PendSV_Handler                  
-00003883  RTC_IRQHandler                  
-0000389b  Reset_Handler                   
-00003883  SPI0_IRQHandler                 
-00003883  SPI1_IRQHandler                 
-00003883  SVC_Handler                     
-00001e89  SYSCFG_DL_ADC12_0_init          
-00002f45  SYSCFG_DL_CAPTURE_0_init        
-00003099  SYSCFG_DL_DMA_CH0_init          
-00003841  SYSCFG_DL_DMA_init              
-00001df5  SYSCFG_DL_GPIO_init             
-000032f9  SYSCFG_DL_SYSCTL_init           
-000029d9  SYSCFG_DL_TIMER_0_init          
-00002b05  SYSCFG_DL_TIMER_1_init          
-00002b49  SYSCFG_DL_UART_0_init           
-00002cc9  SYSCFG_DL_init                  
-00001fa5  SYSCFG_DL_initPower             
-00002249  Send_Byte                       
-00002519  StartAdc                        
-00003883  SysTick_Handler                 
-00003883  TIMA0_IRQHandler                
-00002661  TIMA1_IRQHandler                
-00002ea1  TIMG0_IRQHandler                
-00003883  TIMG12_IRQHandler               
-00003883  TIMG6_IRQHandler                
-00003883  TIMG7_IRQHandler                
-00003883  TIMG8_IRQHandler                
-0000379b  TI_memcpy_small                 
-000037e1  TI_memset_small                 
-00003883  UART0_IRQHandler                
-00003883  UART1_IRQHandler                
-00003883  UART2_IRQHandler                
-00003883  UART3_IRQHandler                
-20200978  USART_TX_BUF                    
+000026e9  OLED_Clear                      
+00001851  OLED_Init                       
+00002d81  OLED_Set_Pos                    
+0000162d  OLED_ShowChar                   
+0000194b  OLED_ShowNum                    
+00002609  OLED_ShowString                 
+0000299b  OLED_WR_Byte                    
+00003977  PendSV_Handler                  
+00003977  RTC_IRQHandler                  
+0000398f  Reset_Handler                   
+00003977  SPI0_IRQHandler                 
+00003977  SPI1_IRQHandler                 
+00003977  SVC_Handler                     
+00001fe9  SYSCFG_DL_ADC12_0_init          
+00003039  SYSCFG_DL_CAPTURE_0_init        
+0000318d  SYSCFG_DL_DMA_CH0_init          
+00003935  SYSCFG_DL_DMA_init              
+00001f55  SYSCFG_DL_GPIO_init             
+000033ed  SYSCFG_DL_SYSCTL_init           
+00002acd  SYSCFG_DL_TIMER_0_init          
+00002bf9  SYSCFG_DL_TIMER_1_init          
+00002c3d  SYSCFG_DL_UART_0_init           
+00002dbd  SYSCFG_DL_init                  
+00002105  SYSCFG_DL_initPower             
+000023a9  Send_Byte                       
+00002679  StartAdc                        
+00003977  SysTick_Handler                 
+00003977  TIMA0_IRQHandler                
+00002755  TIMA1_IRQHandler                
+00002f95  TIMG0_IRQHandler                
+00003977  TIMG12_IRQHandler               
+00003977  TIMG6_IRQHandler                
+00003977  TIMG7_IRQHandler                
+00003977  TIMG8_IRQHandler                
+0000388f  TI_memcpy_small                 
+000038d5  TI_memset_small                 
+00003977  UART0_IRQHandler                
+00003977  UART1_IRQHandler                
+00003977  UART2_IRQHandler                
+00003977  UART3_IRQHandler                
+20200978  USART_TX_BUF_SRC                
 20208000  __STACK_END                     
 00000200  __STACK_SIZE                    
 00000000  __TI_ATRegion0_region_sz        
@@ -499,136 +502,139 @@ address   name
 00000000  __TI_ATRegion2_region_sz        
 00000000  __TI_ATRegion2_src_addr         
 00000000  __TI_ATRegion2_trg_addr         
-000041e4  __TI_CINIT_Base                 
-000041f4  __TI_CINIT_Limit                
-000041f4  __TI_CINIT_Warm                 
-000041d0  __TI_Handler_Table_Base         
-000041dc  __TI_Handler_Table_Limit        
-00002d7d  __TI_auto_init_nobinit_nopinit  
-000022c5  __TI_decompress_lzss            
-000037ad  __TI_decompress_none            
+0000452c  __TI_CINIT_Base                 
+0000453c  __TI_CINIT_Limit                
+0000453c  __TI_CINIT_Warm                 
+00004518  __TI_Handler_Table_Base         
+00004524  __TI_Handler_Table_Limit        
+00002e71  __TI_auto_init_nobinit_nopinit  
+00002425  __TI_decompress_lzss            
+000038a1  __TI_decompress_none            
 ffffffff  __TI_pprof_out_hndl             
 ffffffff  __TI_prof_data_size             
 ffffffff  __TI_prof_data_start            
 00000000  __TI_static_base__              
-000037d1  __TI_zero_init                  
+000038c5  __TI_zero_init                  
 000010ab  __adddf3                        
-00001c6f  __addsf3                        
-000023c1  __aeabi_d2f                     
-00002a71  __aeabi_d2iz                    
+00001dcf  __addsf3                        
+00002521  __aeabi_d2f                     
+00002b65  __aeabi_d2iz                    
 000010ab  __aeabi_dadd                    
-00002731  __aeabi_dcmpeq                  
-0000276d  __aeabi_dcmpge                  
-00002781  __aeabi_dcmpgt                  
-00002759  __aeabi_dcmple                  
-00002745  __aeabi_dcmplt                  
-000015e5  __aeabi_ddiv                    
-000019c9  __aeabi_dmul                    
+00002825  __aeabi_dcmpeq                  
+00002861  __aeabi_dcmpge                  
+00002875  __aeabi_dcmpgt                  
+0000284d  __aeabi_dcmple                  
+00002839  __aeabi_dcmplt                  
+00001745  __aeabi_ddiv                    
+00001b29  __aeabi_dmul                    
 000010a1  __aeabi_dsub                    
-20200990  __aeabi_errno                   
-00003849  __aeabi_errno_addr              
-00002c0d  __aeabi_f2d                     
-00002ed9  __aeabi_f2iz                    
-00002f79  __aeabi_f2uiz                   
-00001c6f  __aeabi_fadd                    
-00002795  __aeabi_fcmpeq                  
-000027d1  __aeabi_fcmpge                  
-000027e5  __aeabi_fcmpgt                  
-000027bd  __aeabi_fcmple                  
-000027a9  __aeabi_fcmplt                  
-000021c5  __aeabi_fdiv                    
-00002031  __aeabi_fmul                    
-00001c65  __aeabi_fsub                    
-000030f1  __aeabi_i2d                     
-00002d05  __aeabi_i2f                     
-00002851  __aeabi_idiv                    
+20200998  __aeabi_errno                   
+0000393d  __aeabi_errno_addr              
+00002d01  __aeabi_f2d                     
+00002fcd  __aeabi_f2iz                    
+0000306d  __aeabi_f2uiz                   
+00001dcf  __aeabi_fadd                    
+00002889  __aeabi_fcmpeq                  
+000028c5  __aeabi_fcmpge                  
+000028d9  __aeabi_fcmpgt                  
+000028b1  __aeabi_fcmple                  
+0000289d  __aeabi_fcmplt                  
+00002325  __aeabi_fdiv                    
+00002191  __aeabi_fmul                    
+00001dc5  __aeabi_fsub                    
+000031e5  __aeabi_i2d                     
+00002df9  __aeabi_i2f                     
+00002945  __aeabi_idiv                    
 00001233  __aeabi_idiv0                   
-00002851  __aeabi_idivmod                 
-000023b5  __aeabi_memclr                  
-000023b5  __aeabi_memclr4                 
-000023b5  __aeabi_memclr8                 
-00003851  __aeabi_memcpy                  
-00003851  __aeabi_memcpy4                 
-00003851  __aeabi_memcpy8                 
-000031bd  __aeabi_ui2f                    
-00002bcd  __aeabi_uidiv                   
-00002bcd  __aeabi_uidivmod                
+00002945  __aeabi_idivmod                 
+00002515  __aeabi_memclr                  
+00002515  __aeabi_memclr4                 
+00002515  __aeabi_memclr8                 
+00003945  __aeabi_memcpy                  
+00003945  __aeabi_memcpy4                 
+00003945  __aeabi_memcpy8                 
+000032b1  __aeabi_ui2f                    
+00002cc1  __aeabi_uidiv                   
+00002cc1  __aeabi_uidivmod                
 ffffffff  __binit__                       
-000026c9  __cmpdf2                        
-00002db9  __cmpsf2                        
-000015e5  __divdf3                        
-000021c5  __divsf3                        
-000026c9  __eqdf2                         
-00002db9  __eqsf2                         
-00002c0d  __extendsfdf2                   
-00002a71  __fixdfsi                       
-00002ed9  __fixsfsi                       
-00002f79  __fixunssfsi                    
-000030f1  __floatsidf                     
-00002d05  __floatsisf                     
-000031bd  __floatunsisf                   
-00002341  __gedf2                         
-00002d41  __gesf2                         
-00002341  __gtdf2                         
-00002d41  __gtsf2                         
-000026c9  __ledf2                         
-00002db9  __lesf2                         
-000026c9  __ltdf2                         
-00002db9  __ltsf2                         
+000027bd  __cmpdf2                        
+00002ead  __cmpsf2                        
+00001745  __divdf3                        
+00002325  __divsf3                        
+000027bd  __eqdf2                         
+00002ead  __eqsf2                         
+00002d01  __extendsfdf2                   
+00002b65  __fixdfsi                       
+00002fcd  __fixsfsi                       
+0000306d  __fixunssfsi                    
+000031e5  __floatsidf                     
+00002df9  __floatsisf                     
+000032b1  __floatunsisf                   
+000024a1  __gedf2                         
+00002e35  __gesf2                         
+000024a1  __gtdf2                         
+00002e35  __gtsf2                         
+000027bd  __ledf2                         
+00002ead  __lesf2                         
+000027bd  __ltdf2                         
+00002ead  __ltsf2                         
 UNDEFED   __mpu_init                      
-000019c9  __muldf3                        
-00002df5  __muldsi3                       
-00002031  __mulsf3                        
-000026c9  __nedf2                         
-00002db9  __nesf2                         
+00001b29  __muldf3                        
+00002ee9  __muldsi3                       
+00002191  __mulsf3                        
+000027bd  __nedf2                         
+00002ead  __nesf2                         
 20207e00  __stack                         
 20200000  __start___llvm_prf_bits         
 20200000  __start___llvm_prf_cnts         
 20200000  __stop___llvm_prf_bits          
 20200000  __stop___llvm_prf_cnts          
 000010a1  __subdf3                        
-00001c65  __subsf3                        
-000023c1  __truncdfsf2                    
-000031e5  _c_int00_noargs                 
+00001dc5  __subsf3                        
+00002521  __truncdfsf2                    
+000032d9  _c_int00_noargs                 
 UNDEFED   _system_post_cinit              
-0000389f  _system_pre_init                
-0000387d  abort                           
-20200994  adc_fs                          
-00003ea0  asc2_0806                       
-000038b0  asc2_1608                       
-20200998  avg_max                         
-2020099c  avg_min                         
+00003993  _system_pre_init                
+00003971  abort                           
+2020099c  adc_fs                          
+00003f90  asc2_0806                       
+000039a0  asc2_1608                       
+202009a0  avg_max                         
+202009a4  avg_min                         
 ffffffff  binit                           
-202009a0  count                           
-00003259  delay_ms                        
+202009a8  count                           
+0000334d  delay_ms                        
 00000eb5  findV                           
-00002435  findbase                        
-20200980  freq_pin                        
+00002595  findbase                        
+20200988  freq_pin                        
 20200000  gADCSamples                     
-2020097f  gCheckADC                       
+20200987  gCheckADC                       
 20200800  gTIMER_0Backup                  
 202008bc  gTIMER_1Backup                  
-00002141  getdec                          
-00002c4d  getlen                          
+000022a1  getdec                          
+00002d41  getlen                          
 00000000  interruptVectors                
-00001b8d  ldexp                           
-00001b8d  ldexpl                          
-2020098e  ledState                        
-00001d3d  main                            
-2020098f  multipler                       
-0000303d  oled_pow                        
-202009a4  point                           
+00001ced  ldexp                           
+00001ced  ldexpl                          
+20200996  ledState                        
+00001e9d  main                            
+20200997  multipler                       
+00003131  oled_pow                        
+202009ac  point                           
 000000c1  pow                             
 000000c1  powl                            
-00001b8d  scalbn                          
-00001b8d  scalbnl                         
-000027f9  sendBluetoothData               
+00001ced  scalbn                          
+00001ced  scalbnl                         
+000028ed  sendBluetoothData               
+000041b8  sin_table                       
 00001235  sqrt                            
 00001235  sqrtl                           
-20200988  str                             
-000013a5  switchwave                      
-202009a8  vppadc                          
-20200984  waveform                        
+00004280  square_table                    
+20200990  str                             
+00001505  switchwave                      
+00004348  triangle_table                  
+202009b0  vppadc                          
+2020098c  waveform                        
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -658,163 +664,166 @@ address   name
 00001233  __aeabi_idiv0                   
 00001235  sqrt                            
 00001235  sqrtl                           
-000013a5  switchwave                      
-000014cd  OLED_ShowChar                   
-000015e5  __aeabi_ddiv                    
-000015e5  __divdf3                        
-000016f1  OLED_Init                       
-000017eb  OLED_ShowNum                    
-000018e1  DL_Timer_initTimerMode          
-000019c9  __aeabi_dmul                    
-000019c9  __muldf3                        
-00001aad  DL_Timer_initCaptureCombinedMode
-00001b8d  ldexp                           
-00001b8d  ldexpl                          
-00001b8d  scalbn                          
-00001b8d  scalbnl                         
-00001c65  __aeabi_fsub                    
-00001c65  __subsf3                        
-00001c6f  __addsf3                        
-00001c6f  __aeabi_fadd                    
-00001d3d  main                            
-00001df5  SYSCFG_DL_GPIO_init             
-00001e89  SYSCFG_DL_ADC12_0_init          
-00001f19  GROUP1_IRQHandler               
-00001fa5  SYSCFG_DL_initPower             
-00002031  __aeabi_fmul                    
-00002031  __mulsf3                        
-00002141  getdec                          
-000021c5  __aeabi_fdiv                    
-000021c5  __divsf3                        
-00002249  Send_Byte                       
-000022c5  __TI_decompress_lzss            
-00002341  __gedf2                         
-00002341  __gtdf2                         
-000023b5  __aeabi_memclr                  
-000023b5  __aeabi_memclr4                 
-000023b5  __aeabi_memclr8                 
-000023c1  __aeabi_d2f                     
-000023c1  __truncdfsf2                    
-00002435  findbase                        
-000024a9  OLED_ShowString                 
-00002519  StartAdc                        
-00002589  BTSent                          
-000025f5  OLED_Clear                      
-00002661  TIMA1_IRQHandler                
-000026c9  __cmpdf2                        
-000026c9  __eqdf2                         
-000026c9  __ledf2                         
-000026c9  __ltdf2                         
-000026c9  __nedf2                         
-00002731  __aeabi_dcmpeq                  
-00002745  __aeabi_dcmplt                  
-00002759  __aeabi_dcmple                  
-0000276d  __aeabi_dcmpge                  
-00002781  __aeabi_dcmpgt                  
-00002795  __aeabi_fcmpeq                  
-000027a9  __aeabi_fcmplt                  
-000027bd  __aeabi_fcmple                  
-000027d1  __aeabi_fcmpge                  
-000027e5  __aeabi_fcmpgt                  
-000027f9  sendBluetoothData               
-00002851  __aeabi_idiv                    
-00002851  __aeabi_idivmod                 
-000028a7  OLED_WR_Byte                    
-00002941  DL_DMA_initChannel              
-000029d9  SYSCFG_DL_TIMER_0_init          
-00002a71  __aeabi_d2iz                    
-00002a71  __fixdfsi                       
-00002abd  DL_UART_init                    
-00002b05  SYSCFG_DL_TIMER_1_init          
-00002b49  SYSCFG_DL_UART_0_init           
-00002b8d  DL_ADC12_setClockConfig         
-00002bcd  __aeabi_uidiv                   
-00002bcd  __aeabi_uidivmod                
-00002c0d  __aeabi_f2d                     
-00002c0d  __extendsfdf2                   
-00002c4d  getlen                          
-00002c8d  OLED_Set_Pos                    
-00002cc9  SYSCFG_DL_init                  
-00002d05  __aeabi_i2f                     
-00002d05  __floatsisf                     
-00002d41  __gesf2                         
-00002d41  __gtsf2                         
-00002d7d  __TI_auto_init_nobinit_nopinit  
-00002db9  __cmpsf2                        
-00002db9  __eqsf2                         
-00002db9  __lesf2                         
-00002db9  __ltsf2                         
-00002db9  __nesf2                         
-00002df5  __muldsi3                       
-00002e69  I2C_Start                       
-00002ea1  TIMG0_IRQHandler                
-00002ed9  __aeabi_f2iz                    
-00002ed9  __fixsfsi                       
-00002f45  SYSCFG_DL_CAPTURE_0_init        
-00002f79  __aeabi_f2uiz                   
-00002f79  __fixunssfsi                    
-00002fdd  I2C_Stop                        
-0000300d  I2C_WaitAck                     
-0000303d  oled_pow                        
-00003099  SYSCFG_DL_DMA_CH0_init          
-000030f1  __aeabi_i2d                     
-000030f1  __floatsidf                     
-000031bd  __aeabi_ui2f                    
-000031bd  __floatunsisf                   
-000031e5  _c_int00_noargs                 
-00003259  delay_ms                        
-0000327d  ADC0_IRQHandler                 
-000032f9  SYSCFG_DL_SYSCTL_init           
-00003431  DL_Timer_setClockConfig         
-00003789  DL_UART_setClockConfig          
-0000379b  TI_memcpy_small                 
-000037ad  __TI_decompress_none            
-000037d1  __TI_zero_init                  
-000037e1  TI_memset_small                 
-000037ef  DL_Common_delayCycles           
-00003841  SYSCFG_DL_DMA_init              
-00003849  __aeabi_errno_addr              
-00003851  __aeabi_memcpy                  
-00003851  __aeabi_memcpy4                 
-00003851  __aeabi_memcpy8                 
-0000387d  abort                           
-00003883  ADC1_IRQHandler                 
-00003883  AES_IRQHandler                  
-00003883  CANFD0_IRQHandler               
-00003883  DAC0_IRQHandler                 
-00003883  DMA_IRQHandler                  
-00003883  Default_Handler                 
-00003883  GROUP0_IRQHandler               
-00003883  HardFault_Handler               
-00003883  I2C0_IRQHandler                 
-00003883  I2C1_IRQHandler                 
-00003883  NMI_Handler                     
-00003883  PendSV_Handler                  
-00003883  RTC_IRQHandler                  
-00003883  SPI0_IRQHandler                 
-00003883  SPI1_IRQHandler                 
-00003883  SVC_Handler                     
-00003883  SysTick_Handler                 
-00003883  TIMA0_IRQHandler                
-00003883  TIMG12_IRQHandler               
-00003883  TIMG6_IRQHandler                
-00003883  TIMG7_IRQHandler                
-00003883  TIMG8_IRQHandler                
-00003883  UART0_IRQHandler                
-00003883  UART1_IRQHandler                
-00003883  UART2_IRQHandler                
-00003883  UART3_IRQHandler                
-00003886  C$$EXIT                         
-00003887  HOSTexit                        
-0000389b  Reset_Handler                   
-0000389f  _system_pre_init                
-000038b0  asc2_1608                       
-00003ea0  asc2_0806                       
-000041d0  __TI_Handler_Table_Base         
-000041dc  __TI_Handler_Table_Limit        
-000041e4  __TI_CINIT_Base                 
-000041f4  __TI_CINIT_Limit                
-000041f4  __TI_CINIT_Warm                 
+000013a5  BT_send_Src                     
+00001505  switchwave                      
+0000162d  OLED_ShowChar                   
+00001745  __aeabi_ddiv                    
+00001745  __divdf3                        
+00001851  OLED_Init                       
+0000194b  OLED_ShowNum                    
+00001a41  DL_Timer_initTimerMode          
+00001b29  __aeabi_dmul                    
+00001b29  __muldf3                        
+00001c0d  DL_Timer_initCaptureCombinedMode
+00001ced  ldexp                           
+00001ced  ldexpl                          
+00001ced  scalbn                          
+00001ced  scalbnl                         
+00001dc5  __aeabi_fsub                    
+00001dc5  __subsf3                        
+00001dcf  __addsf3                        
+00001dcf  __aeabi_fadd                    
+00001e9d  main                            
+00001f55  SYSCFG_DL_GPIO_init             
+00001fe9  SYSCFG_DL_ADC12_0_init          
+00002079  GROUP1_IRQHandler               
+00002105  SYSCFG_DL_initPower             
+00002191  __aeabi_fmul                    
+00002191  __mulsf3                        
+000022a1  getdec                          
+00002325  __aeabi_fdiv                    
+00002325  __divsf3                        
+000023a9  Send_Byte                       
+00002425  __TI_decompress_lzss            
+000024a1  __gedf2                         
+000024a1  __gtdf2                         
+00002515  __aeabi_memclr                  
+00002515  __aeabi_memclr4                 
+00002515  __aeabi_memclr8                 
+00002521  __aeabi_d2f                     
+00002521  __truncdfsf2                    
+00002595  findbase                        
+00002609  OLED_ShowString                 
+00002679  StartAdc                        
+000026e9  OLED_Clear                      
+00002755  TIMA1_IRQHandler                
+000027bd  __cmpdf2                        
+000027bd  __eqdf2                         
+000027bd  __ledf2                         
+000027bd  __ltdf2                         
+000027bd  __nedf2                         
+00002825  __aeabi_dcmpeq                  
+00002839  __aeabi_dcmplt                  
+0000284d  __aeabi_dcmple                  
+00002861  __aeabi_dcmpge                  
+00002875  __aeabi_dcmpgt                  
+00002889  __aeabi_fcmpeq                  
+0000289d  __aeabi_fcmplt                  
+000028b1  __aeabi_fcmple                  
+000028c5  __aeabi_fcmpge                  
+000028d9  __aeabi_fcmpgt                  
+000028ed  sendBluetoothData               
+00002945  __aeabi_idiv                    
+00002945  __aeabi_idivmod                 
+0000299b  OLED_WR_Byte                    
+00002a35  DL_DMA_initChannel              
+00002acd  SYSCFG_DL_TIMER_0_init          
+00002b65  __aeabi_d2iz                    
+00002b65  __fixdfsi                       
+00002bb1  DL_UART_init                    
+00002bf9  SYSCFG_DL_TIMER_1_init          
+00002c3d  SYSCFG_DL_UART_0_init           
+00002c81  DL_ADC12_setClockConfig         
+00002cc1  __aeabi_uidiv                   
+00002cc1  __aeabi_uidivmod                
+00002d01  __aeabi_f2d                     
+00002d01  __extendsfdf2                   
+00002d41  getlen                          
+00002d81  OLED_Set_Pos                    
+00002dbd  SYSCFG_DL_init                  
+00002df9  __aeabi_i2f                     
+00002df9  __floatsisf                     
+00002e35  __gesf2                         
+00002e35  __gtsf2                         
+00002e71  __TI_auto_init_nobinit_nopinit  
+00002ead  __cmpsf2                        
+00002ead  __eqsf2                         
+00002ead  __lesf2                         
+00002ead  __ltsf2                         
+00002ead  __nesf2                         
+00002ee9  __muldsi3                       
+00002f5d  I2C_Start                       
+00002f95  TIMG0_IRQHandler                
+00002fcd  __aeabi_f2iz                    
+00002fcd  __fixsfsi                       
+00003039  SYSCFG_DL_CAPTURE_0_init        
+0000306d  __aeabi_f2uiz                   
+0000306d  __fixunssfsi                    
+000030d1  I2C_Stop                        
+00003101  I2C_WaitAck                     
+00003131  oled_pow                        
+0000318d  SYSCFG_DL_DMA_CH0_init          
+000031e5  __aeabi_i2d                     
+000031e5  __floatsidf                     
+000032b1  __aeabi_ui2f                    
+000032b1  __floatunsisf                   
+000032d9  _c_int00_noargs                 
+0000334d  delay_ms                        
+00003371  ADC0_IRQHandler                 
+000033ed  SYSCFG_DL_SYSCTL_init           
+00003525  DL_Timer_setClockConfig         
+0000387d  DL_UART_setClockConfig          
+0000388f  TI_memcpy_small                 
+000038a1  __TI_decompress_none            
+000038c5  __TI_zero_init                  
+000038d5  TI_memset_small                 
+000038e3  DL_Common_delayCycles           
+00003935  SYSCFG_DL_DMA_init              
+0000393d  __aeabi_errno_addr              
+00003945  __aeabi_memcpy                  
+00003945  __aeabi_memcpy4                 
+00003945  __aeabi_memcpy8                 
+00003971  abort                           
+00003977  ADC1_IRQHandler                 
+00003977  AES_IRQHandler                  
+00003977  CANFD0_IRQHandler               
+00003977  DAC0_IRQHandler                 
+00003977  DMA_IRQHandler                  
+00003977  Default_Handler                 
+00003977  GROUP0_IRQHandler               
+00003977  HardFault_Handler               
+00003977  I2C0_IRQHandler                 
+00003977  I2C1_IRQHandler                 
+00003977  NMI_Handler                     
+00003977  PendSV_Handler                  
+00003977  RTC_IRQHandler                  
+00003977  SPI0_IRQHandler                 
+00003977  SPI1_IRQHandler                 
+00003977  SVC_Handler                     
+00003977  SysTick_Handler                 
+00003977  TIMA0_IRQHandler                
+00003977  TIMG12_IRQHandler               
+00003977  TIMG6_IRQHandler                
+00003977  TIMG7_IRQHandler                
+00003977  TIMG8_IRQHandler                
+00003977  UART0_IRQHandler                
+00003977  UART1_IRQHandler                
+00003977  UART2_IRQHandler                
+00003977  UART3_IRQHandler                
+0000397a  C$$EXIT                         
+0000397b  HOSTexit                        
+0000398f  Reset_Handler                   
+00003993  _system_pre_init                
+000039a0  asc2_1608                       
+00003f90  asc2_0806                       
+000041b8  sin_table                       
+00004280  square_table                    
+00004348  triangle_table                  
+00004518  __TI_Handler_Table_Base         
+00004524  __TI_Handler_Table_Limit        
+0000452c  __TI_CINIT_Base                 
+0000453c  __TI_CINIT_Limit                
+0000453c  __TI_CINIT_Warm                 
 20200000  __start___llvm_prf_bits         
 20200000  __start___llvm_prf_cnts         
 20200000  __stop___llvm_prf_bits          
@@ -822,20 +831,20 @@ address   name
 20200000  gADCSamples                     
 20200800  gTIMER_0Backup                  
 202008bc  gTIMER_1Backup                  
-20200978  USART_TX_BUF                    
-2020097f  gCheckADC                       
-20200980  freq_pin                        
-20200984  waveform                        
-20200988  str                             
-2020098e  ledState                        
-2020098f  multipler                       
-20200990  __aeabi_errno                   
-20200994  adc_fs                          
-20200998  avg_max                         
-2020099c  avg_min                         
-202009a0  count                           
-202009a4  point                           
-202009a8  vppadc                          
+20200978  USART_TX_BUF_SRC                
+20200987  gCheckADC                       
+20200988  freq_pin                        
+2020098c  waveform                        
+20200990  str                             
+20200996  ledState                        
+20200997  multipler                       
+20200998  __aeabi_errno                   
+2020099c  adc_fs                          
+202009a0  avg_max                         
+202009a4  avg_min                         
+202009a8  count                           
+202009ac  point                           
+202009b0  vppadc                          
 20207e00  __stack                         
 20208000  __STACK_END                     
 ffffffff  __TI_pprof_out_hndl             
@@ -846,4 +855,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                      
 UNDEFED   _system_post_cinit              
 
-[210 symbols]
+[213 symbols]
