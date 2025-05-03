@@ -19,19 +19,19 @@ timx_timer_mode_capture_duty_and_period.o: ../timx_timer_mode_capture_duty_and_p
 	@echo 'Finished building: "$<"'
 	@echo ' '
 
-build-1795150209: ../timx_timer_mode_capture_duty_and_period.syscfg
+build-483169409: ../timx_timer_mode_capture_duty_and_period.syscfg
 	@echo 'Building file: "$<"'
 	@echo 'Invoking: SysConfig'
 	"C:/ti/sysconfig_1.22.0/sysconfig_cli.bat" --script "C:/Users/JamesHotten/Desktop/code/25C/25C/timx_timer_mode_capture_duty_and_period.syscfg" -o "." -s "C:/ti/mspm0_sdk_2_04_00_06/.metadata/product.json" --compiler ticlang
 	@echo 'Finished building: "$<"'
 	@echo ' '
 
-device_linker.cmd: build-1795150209 ../timx_timer_mode_capture_duty_and_period.syscfg
-device.opt: build-1795150209
-device.cmd.genlibs: build-1795150209
-ti_msp_dl_config.c: build-1795150209
-ti_msp_dl_config.h: build-1795150209
-Event.dot: build-1795150209
+device_linker.cmd: build-483169409 ../timx_timer_mode_capture_duty_and_period.syscfg
+device.opt: build-483169409
+device.cmd.genlibs: build-483169409
+ti_msp_dl_config.c: build-483169409
+ti_msp_dl_config.h: build-483169409
+Event.dot: build-483169409
 
 %.o: ./%.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
 	@echo 'Building file: "$<"'

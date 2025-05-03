@@ -11,6 +11,8 @@
  */
 const CAPTURE  = scripting.addModule("/ti/driverlib/CAPTURE", {}, false);
 const CAPTURE1 = CAPTURE.addInstance();
+const GPIO     = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1    = GPIO.addInstance();
 const PWM      = scripting.addModule("/ti/driverlib/PWM", {}, false);
 const PWM1     = PWM.addInstance();
 
@@ -28,6 +30,9 @@ CAPTURE1.peripheral.ccp0Pin.$assign = "PA12";
 CAPTURE1.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric0";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
+
+GPIO1.$name                   = "GPIO_GRP_0";
+GPIO1.associatedPins[0].$name = "PIN_0";
 
 PWM1.$name                      = "PWM_0";
 PWM1.ccIndex                    = [0];
@@ -47,6 +52,7 @@ SYSCTL.clockTreeEn           = true;
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-Board.peripheral.$suggestSolution          = "DEBUGSS";
-Board.peripheral.swclkPin.$suggestSolution = "PA20";
-Board.peripheral.swdioPin.$suggestSolution = "PA19";
+Board.peripheral.$suggestSolution            = "DEBUGSS";
+Board.peripheral.swclkPin.$suggestSolution   = "PA20";
+Board.peripheral.swdioPin.$suggestSolution   = "PA19";
+GPIO1.associatedPins[0].pin.$suggestSolution = "PB13";
