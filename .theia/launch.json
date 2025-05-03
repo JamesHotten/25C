@@ -36,12 +36,12 @@
             }
         },
         {
-            "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
+            "name": "BT",
             "type": "ccs-debug",
             "request": "launch",
             "projectInfo": {
-                "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
-                "resourceId": "/uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang"
+                "name": "BT",
+                "resourceId": "/BT"
             },
             "debuggerSettings": {
                 "targetConfigs/MSPM0G3507.ccxml": {
@@ -49,6 +49,24 @@
                         "data": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n<PropertyValues/>\n"
                     }
                 }
+            }
+        },
+        {
+            "name": "timx_timer_mode_capture_duty_and_period_LP_MSPM0G3507_nortos_ticlang",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "timx_timer_mode_capture_duty_and_period_LP_MSPM0G3507_nortos_ticlang",
+                "resourceId": "/timx_timer_mode_capture_duty_and_period_LP_MSPM0G3507_nortos_ticlang"
+            }
+        },
+        {
+            "name": "HIGHPREQ",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "HIGHPREQ",
+                "resourceId": "/HIGHPREQ"
             }
         }
     ]
