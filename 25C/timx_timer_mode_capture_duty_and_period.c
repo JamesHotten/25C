@@ -53,42 +53,29 @@ float FFT_OUTPUT[ADC_SAMPLE_SIZE];
 uint16_t waveform;
 float FFT_OUTPUT_MAX = 0;
 uint32_t FFT_OUTPUT_MAX_index = 0;
-#define ADC_SAMPLE_SIZE 1024
 uint16_t gADCSamples[ADC_SAMPLE_SIZE];
 volatile bool gCheckADC;
 
-uint32_t find_num = 0;
-uint8_t beipin = 1;
+uint32_t point = 0;
+uint8_t multipler = 1;
 float_t vppadc = 0;
 ////////////////////////////////////////////////////////////////////////
 
 // 函数封装
 ////////////////////////////////////////////////////////////////////////
-// 测频法捕获中断
-void CAPTURE_0_INST_IRQHandler(void) {
-  switch (DL_TimerG_getPendingInterrupt(CAPTURE_0_INST)) {
-  case DL_TIMERG_IIDX_CC1_DN:
-    count++;
-    break;
-  case DL_TIMERG_IIDX_ZERO:
-    break;
-  default:
-    break;
-  }
-}
 
-// 测频法总时钟控制，以1s为测量时间，时间不用担心
-void TIMER_0_INST_IRQHandler(void) {
-  switch (DL_TimerA_getPendingInterrupt(TIMER_0_INST)) {
-  case DL_TIMER_IIDX_ZERO:
-    DL_Timer_clearInterruptStatus(TIMER_0_INST, DL_TIMER_INTERRUPT_ZERO_EVENT);
-    freq_pin = (float)count * 1.01106;
-    break;
-  default:
-    break;
+// 蓝牙模块发送函数
+void sendBluetoothData(const uint8_t *data, uint32_t length) {
+  uint32_t i;
+  for (i = 0; i < length; i++) {
+    while (DL_UART_Extend_isTXFIFOEmpty(UART_0_INST) == 0)
+      ; // 等待发送缓冲区有空间
+    DL_UART_Extend_transmitData(UART_0_INST, data[i]);
+
+    while (DL_UART_isBusy(UART_0_INST))
+      ;
   }
 }
-// 蓝牙模块发送函数
 
 // 钟控ADC,改为TIMER1启用
 void StartAdc(int freq) {
@@ -104,39 +91,40 @@ void StartAdc(int freq) {
 
   return;
 }
-////////;fft粗采用
 
 void findbase(void) {
-  adc_fs = 400e3;
-  StartAdc(adc_fs);
-  StartAdc(adc_fs);
+  // adc_fs = 400e3;
+  // StartAdc(adc_fs);
+  // StartAdc(adc_fs);
 
-  uint16_t i;
-  for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
-    FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
-    FFT_INPUT[i * 2 + 1] = 0;
-  }
+  //   uint16_t i;
+  //   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
+  //     FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
+  //     FFT_INPUT[i * 2 + 1] = 0;
+  //   }
 
-  arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
-  arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
+  //   arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
+  //   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
 
-  FFT_OUTPUT[0] = 0;
-  arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE, &FFT_OUTPUT_MAX,
-              &FFT_OUTPUT_MAX_index);
+  //   FFT_OUTPUT[0] = 0;
+  //   arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE, &FFT_OUTPUT_MAX,
+  //               &FFT_OUTPUT_MAX_index);
 
-  base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
-  if (base_frequency < 100) {
-    beipin = 120;
-  } else if (base_frequency < 5000) {
-    beipin = 24;
+  //   base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
+  if (freq_pin < 50) {
+    multipler = 2;
+  } else if (freq_pin < 5000) {
+    multipler = 10;
   } else {
-    beipin = 12;
+    multipler = 10;
   }
-  adc_fs = base_frequency * beipin;
+  adc_fs = freq_pin * multipler;
 }
 
 /////寻找V
 void findV(void) {
+  StartAdc(adc_fs);
+  StartAdc(adc_fs);
   // __BKPT();
   int Vmax[5], Vmin[5];
 
@@ -202,37 +190,26 @@ void findV(void) {
 }
 
 ////
-void ADC12_0_INST_IRQHandler(void) {
-  switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
-  case DL_ADC12_IIDX_DMA_DONE:
-    // DL_TimerA_disableClock(TIMER_0_INST);
-    // DL_ADC12_disableConversions(ADC12_0_INST);
-    gCheckADC = true;
-    break;
-  default:
-    break;
-  }
-}
 
 int switchwave() {
   // 准确判断波形类别
   waveform = 0;
   float_t line = 0;
 
-  find_num = 0;
+  point = 0;
   int t = 0;
   float harm;
   line = (avg_max - avg_min) * 0.25 + (avg_max + avg_min) * 0.5;
-  for (t = 10; t < 12 * beipin + 10; t++) {
+  for (t = 10; t < 12 * multipler + 10; t++) {
     if (gADCSamples[t] > line) {
-      find_num++;
+      point++;
     }
   }
-  if (find_num < 3 * beipin + 25) {
+  if (point < 3 * multipler + 5) {
     waveform = 3; // 三角波
-  } else if (find_num < 4 * beipin + 25) {
+  } else if (point < 4 * multipler + 5) {
     waveform = 1; // 正弦波
-  } else if (find_num < 6 * beipin + 25) {
+  } else if (point < 6 * multipler + 25) {
     waveform = 2; // 方波
   }
   return waveform;
@@ -254,6 +231,106 @@ int switchwave() {
 //     waveform = 1; // 正弦波
 //   return waveform;
 // }
+
+int getlen(float val) {
+  int reg = val;
+  int len = 0;
+  while (val >= 1) {
+    val /= 10;
+    len++;
+  }
+  return len;
+}
+
+char str[6] = {'.'};
+void getdec(float val, int bit) {
+  int ans = val * pow(10, bit);
+  for (int i = bit; i > 0; i--) {
+    str[i] = ans % 10 + '0';
+    ans /= 10;
+  }
+  str[bit + 1] = '\0';
+  return;
+}
+// OLED显示模块部分
+// SCL接PA12，SDA接PA13
+void OLEDSHOW() {
+  int waveform = switchwave();
+  OLED_ShowString(0, 0, (uint8_t *)"wave:", 16);
+  if (waveform == 1) {
+    OLED_ShowString(50, 0, (uint8_t *)"sin", 16);
+  } else if (waveform == 2) {
+    OLED_ShowString(50, 0, (uint8_t *)"square", 16);
+  } else if (waveform == 3) {
+    OLED_ShowString(50, 0, (uint8_t *)"triangle", 16);
+  } else {
+    { OLED_ShowString(50, 0, (uint8_t *)"wait", 16); }
+  }
+
+  float vpp = vppadc * 1e3;
+  int len = getlen(vpp);
+  OLED_ShowString(0, 4, (uint8_t *)"vpp:", 16);
+  OLED_ShowNum(50, 4, (int)(vpp), len, 16);
+  getdec(vpp, 3);
+  OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+  OLED_ShowString(50 + (len + 4) * 8, 4, (uint8_t *)"mV", 16);
+
+  len = getlen(freq_pin);
+  if (freq_pin < 10) {
+    OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
+    OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
+    getdec(freq_pin, 4);
+    OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"Hz", 16);
+  } else if (freq_pin < 100) {
+    OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
+    OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
+    getdec(freq_pin, 3);
+    OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"Hz", 16);
+  } else if (freq_pin < 1e3) {
+    OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
+    OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
+    getdec(freq_pin, 2);
+    OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"Hz", 16);
+  } else if (freq_pin < 1e4) {
+    float freq = freq_pin / 1e3;
+    len -= 3;
+    OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
+    OLED_ShowNum(50, 2, (int)(freq), len, 16);
+    getdec(freq, 4);
+    OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"kHz", 16);
+  } else {
+    len -= 3;
+    float freq = freq_pin / 1e3;
+    OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
+    OLED_ShowNum(50, 2, (int)(freq), len, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"kHz", 16);
+    getdec(freq, 3);
+    OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
+    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"kHz", 16);
+  }
+
+  delay_cycles(32e6); // 每秒刷新一次
+  OLED_Clear();
+}
+
+// 蓝牙模块发送数据定义
+// RX PA11   TX PA10
+void BTSent() {
+  USART_TX_BUF[0] = 0xA5;                    // 数据包头
+  *((float *)(&USART_TX_BUF[1])) = freq_pin; // float值
+  uint8_t checksum = 0;
+  for (uint8_t i = 1; i < USART_TX_LEN - 2;
+       i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
+    checksum += USART_TX_BUF[i];
+    USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
+    USART_TX_BUF[USART_TX_LEN - 1] = 0x5A;     // 包尾字节
+    sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
+  }
+}
 
 int main(void) {
   SYSCFG_DL_init();
@@ -277,44 +354,56 @@ int main(void) {
   DL_TimerG_startCounter(CAPTURE_0_INST);
   // OLED初始化
 
-
   while (1) {
-//为了防止ADC和测频法互相干扰，必须要先加入延时
-    delay_cycles(32e6);;
+    // 为了防止ADC和测频法互相干扰，必须要先加入延时
+    delay_cycles(32e6);
+
     findbase();
-    StartAdc(adc_fs);
-    StartAdc(adc_fs);
+
     findV();
-    switchwave();
 
-    // OLED显示模块部分
-    //SCL接PA12，SDA接PA13
-    int waveform = switchwave();
-    OLED_ShowString(0, 2, (uint8_t *)"wave:", 16);
-    if (waveform == 1) {
-      OLED_ShowString(50, 2, (uint8_t *)"sin", 16);
-    } else if (waveform == 2) {
-      OLED_ShowString(50, 2, (uint8_t *)"square", 16);
-    } else if (waveform == 3) {
-      OLED_ShowString(50, 2, (uint8_t *)"triangle", 16);
-    } else {
-      { OLED_ShowString(50, 2, (uint8_t *)"wait", 16); }
-    }
-    OLED_ShowString(0, 4, (uint8_t *)"frequency:", 16);
-    OLED_ShowString(0, 6, (uint8_t *)"peaktopeak:", 16);
-    delay_cycles(32e6);//每秒刷新一次
-    OLED_Clear();
+    OLEDSHOW();
+    BTSent();
+  }
+  return 0;
+}
 
-    // 蓝牙模块发送数据定义
-    // USART_TX_BUF[0] = 0xA5;                // 数据包头
-    // *((float *)(&USART_TX_BUF[1])) = freq; // float值
-    // uint8_t checksum = 0;
-    // for (uint8_t i = 1; i < USART_TX_LEN - 2;
-    //      i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
-    //   checksum += USART_TX_BUF[i];
-    //   USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
-    //   USART_TX_BUF[USART_TX_LEN - 1] = 0x5A;     // 包尾字节
-    //   sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
-    // }
+void ADC12_0_INST_IRQHandler(void) {
+  switch (DL_ADC12_getPendingInterrupt(ADC12_0_INST)) {
+  case DL_ADC12_IIDX_DMA_DONE:
+    // DL_TimerA_disableClock(TIMER_0_INST);
+    // DL_ADC12_disableConversions(ADC12_0_INST);
+    gCheckADC = true;
+    break;
+  default:
+    break;
+  }
+}
+
+// 测频法捕获中断
+void CAPTURE_0_INST_IRQHandler(void) {
+  switch (DL_TimerG_getPendingInterrupt(CAPTURE_0_INST)) {
+  case DL_TIMERG_IIDX_CC1_DN:
+    count++;
+    break;
+  case DL_TIMERG_IIDX_ZERO:
+    break;
+  default:
+    break;
+  }
+}
+
+// 测频法总时钟控制，以1s为测量时间，时间不用担心
+void TIMER_0_INST_IRQHandler(void) {
+  switch (DL_TimerA_getPendingInterrupt(TIMER_0_INST)) {
+  case DL_TIMER_IIDX_ZERO:
+    DL_Timer_clearInterruptStatus(TIMER_0_INST, DL_TIMER_INTERRUPT_ZERO_EVENT);
+    freq_pin = (float)count * 1.01106;
+    DL_TimerA_stopCounter(TIMER_0_INST);
+    DL_TimerA_startCounter(TIMER_0_INST);
+    count = 0;
+    break;
+  default:
+    break;
   }
 }
