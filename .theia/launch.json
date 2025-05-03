@@ -36,12 +36,12 @@
             }
         },
         {
-            "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
+            "name": "BT",
             "type": "ccs-debug",
             "request": "launch",
             "projectInfo": {
-                "name": "uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang",
-                "resourceId": "/uart_echo_interrupts_standby_LP_MSPM0G3507_nortos_ticlang"
+                "name": "BT",
+                "resourceId": "/BT"
             },
             "debuggerSettings": {
                 "targetConfigs/MSPM0G3507.ccxml": {

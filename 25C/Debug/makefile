@@ -125,21 +125,21 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-25C_Test.out 
+25C.out 
 
 EXE_OUTPUTS__QUOTED += \
-"25C_Test.out" 
+"25C.out" 
 
 
 # All Target
 all: $(OBJS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "25C_Test.out"
+	@$(MAKE) --no-print-directory -Onone "25C.out"
 
 # Tool invocations
-25C_Test.out: $(OBJS) $(GEN_CMDS)
+25C.out: $(OBJS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: Arm Linker'
-	"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/bin/tiarmclang.exe" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O0 -gdwarf-3 -Wl,-m"25C_Test.map" -Wl,-i"C:/ti/mspm0_sdk_2_04_00_06/source" -Wl,-i"C:/Users/JamesHotten/Desktop/code/TICCS/25C" -Wl,-i"C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug/syscfg" -Wl,-i"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="25C_Test_linkInfo.xml" -Wl,--rom_model -o "25C_Test.out" $(ORDERED_OBJS)
+	"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/bin/tiarmclang.exe" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O0 -gdwarf-3 -Wl,-m"25C.map" -Wl,-i"C:/ti/mspm0_sdk_2_04_00_06/source" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/25C" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/25C/Debug/syscfg" -Wl,-i"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="25C_linkInfo.xml" -Wl,--rom_model -o "25C.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
