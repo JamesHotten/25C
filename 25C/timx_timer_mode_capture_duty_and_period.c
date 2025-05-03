@@ -59,6 +59,7 @@ volatile bool gCheckADC;
 uint32_t point = 0;
 uint8_t multipler = 1;
 float_t vppadc = 0;
+volatile uint8_t ledState = 0;
 ////////////////////////////////////////////////////////////////////////
 
 // 函数封装
@@ -271,9 +272,9 @@ void OLEDSHOW() {
   int len = getlen(vpp);
   OLED_ShowString(0, 4, (uint8_t *)"vpp:", 16);
   OLED_ShowNum(50, 4, (int)(vpp), len, 16);
-  getdec(vpp, 3);
-  OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
-  OLED_ShowString(50 + (len + 4) * 8, 4, (uint8_t *)"mV", 16);
+  getdec(vpp, 2);
+  OLED_ShowString(50 + len * 8, 4, (uint8_t *)str, 16);
+  OLED_ShowString(50 + (len + 3) * 8, 4, (uint8_t *)"mV", 16);
 
   len = getlen(freq_pin);
   if (freq_pin < 10) {
@@ -281,7 +282,7 @@ void OLEDSHOW() {
     OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
     getdec(freq_pin, 4);
     OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
-    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"Hz", 16);
+    OLED_ShowString(50 + (len + 5) * 8, 2, (uint8_t *)"Hz", 16);
   } else if (freq_pin < 100) {
     OLED_ShowString(0, 2, (uint8_t *)"freq:", 16);
     OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
@@ -293,7 +294,7 @@ void OLEDSHOW() {
     OLED_ShowNum(50, 2, (int)(freq_pin), len, 16);
     getdec(freq_pin, 2);
     OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
-    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"Hz", 16);
+    OLED_ShowString(50 + (len + 3) * 8, 2, (uint8_t *)"Hz", 16);
   } else if (freq_pin < 1e4) {
     float freq = freq_pin / 1e3;
     len -= 3;
@@ -301,7 +302,7 @@ void OLEDSHOW() {
     OLED_ShowNum(50, 2, (int)(freq), len, 16);
     getdec(freq, 4);
     OLED_ShowString(50 + len * 8, 2, (uint8_t *)str, 16);
-    OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"kHz", 16);
+    OLED_ShowString(50 + (len + 5) * 8, 2, (uint8_t *)"kHz", 16);
   } else {
     len -= 3;
     float freq = freq_pin / 1e3;
@@ -352,6 +353,9 @@ int main(void) {
   NVIC_EnableIRQ(CAPTURE_0_INST_INT_IRQN);
   DL_TimerA_startCounter(TIMER_0_INST);
   DL_TimerG_startCounter(CAPTURE_0_INST);
+  // 按键使能
+  DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+  NVIC_EnableIRQ(GPIO_SWITCHES_INT_IRQN);
   // OLED初始化
 
   while (1) {
@@ -404,6 +408,31 @@ void TIMER_0_INST_IRQHandler(void) {
     count = 0;
     break;
   default:
+    break;
+  }
+}
+
+void GROUP1_IRQHandler(void) {
+  switch (DL_Interrupt_getPendingGroup(DL_INTERRUPT_GROUP_1)) {
+  case GPIO_SWITCHES_INT_IIDX:
+    /* If SW is high, turn the LED off */
+    for (volatile int i = 0; i < 10000; i++)
+      ; // 简单的延时
+    if (!DL_GPIO_readPins(GPIO_SWITCHES_PORT,
+                          GPIO_SWITCHES_USER_SWITCH_1_PIN)) {
+      DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+      ledState = !ledState;
+    }
+    if (ledState) {
+      DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+
+    }
+    /* Otherwise, turn the LED on */
+    else {
+      DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+    }
+
+    DL_Interrupt_clearGroup(DL_INTERRUPT_GROUP_1, GPIO_SWITCHES_INT_IIDX);
     break;
   }
 }

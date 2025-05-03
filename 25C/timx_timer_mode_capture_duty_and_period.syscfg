@@ -15,6 +15,8 @@ const CAPTURE       = scripting.addModule("/ti/driverlib/CAPTURE", {}, false);
 const CAPTURE1      = CAPTURE.addInstance();
 const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1         = GPIO.addInstance();
+const GPIO2         = GPIO.addInstance();
+const GPIO3         = GPIO.addInstance();
 const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
 const TIMER2        = TIMER.addInstance();
@@ -36,6 +38,8 @@ ADC121.sampCnt                           = 1;
 ADC121.enabledDMATriggers                = ["DL_ADC12_DMA_MEM0_RESULT_LOADED"];
 ADC121.subChanID                         = 2;
 ADC121.sampleTime0                       = "1us";
+ADC121.peripheral.$assign                = "ADC0";
+ADC121.peripheral.adcPin0.$assign        = "PA27";
 ADC121.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric3";
 ADC121.DMA_CHANNEL.$name                 = "DMA_CH0";
 ADC121.DMA_CHANNEL.addressMode           = "f2b";
@@ -63,6 +67,21 @@ GPIO1.associatedPins[0].assignedPin  = "12";
 GPIO1.associatedPins[1].$name        = "PIN_SDA";
 GPIO1.associatedPins[1].assignedPort = "PORTA";
 GPIO1.associatedPins[1].assignedPin  = "13";
+
+GPIO2.$name                          = "GPIO_LEDS";
+GPIO2.associatedPins[0].$name        = "USER_LED_1";
+GPIO2.associatedPins[0].initialValue = "SET";
+GPIO2.associatedPins[0].assignedPort = "PORTA";
+GPIO2.associatedPins[0].assignedPin  = "0";
+
+GPIO3.$name                              = "GPIO_SWITCHES";
+GPIO3.associatedPins[0].$name            = "USER_SWITCH_1";
+GPIO3.associatedPins[0].direction        = "INPUT";
+GPIO3.associatedPins[0].assignedPort     = "PORTB";
+GPIO3.associatedPins[0].assignedPin      = "21";
+GPIO3.associatedPins[0].internalResistor = "PULL_UP";
+GPIO3.associatedPins[0].interruptEn      = true;
+GPIO3.associatedPins[0].polarity         = "RISE_FALL";
 
 const SYSCTL                 = scripting.addModule("/ti/driverlib/SYSCTL", {}, false);
 SYSCTL.forceDefaultClkConfig = true;
@@ -100,12 +119,12 @@ ProjectConfig.genLibCMSIS = true;
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-ADC121.peripheral.$suggestSolution             = "ADC0";
-ADC121.peripheral.adcPin0.$suggestSolution     = "PA27";
 ADC121.DMA_CHANNEL.peripheral.$suggestSolution = "DMA_CH0";
 Board.peripheral.$suggestSolution              = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution     = "PA20";
 Board.peripheral.swdioPin.$suggestSolution     = "PA19";
 GPIO1.associatedPins[0].pin.$suggestSolution   = "PA12";
 GPIO1.associatedPins[1].pin.$suggestSolution   = "PA13";
+GPIO2.associatedPins[0].pin.$suggestSolution   = "PA0";
+GPIO3.associatedPins[0].pin.$suggestSolution   = "PB21";
 UART1.peripheral.$suggestSolution              = "UART0";
