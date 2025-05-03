@@ -10,10 +10,10 @@ GEN_OPTS__FLAG := @"./device.opt"
 GEN_CMDS__FLAG := -Wl,-l"./device_linker.cmd" 
 
 ORDERED_OBJS += \
-"./empty.o" \
+"./oled.o" \
+"./timx_timer_mode_capture_duty_and_period.o" \
 "./ti_msp_dl_config.o" \
 "./startup_mspm0g350x_ticlang.o" \
-"./OLED/oled.o" \
 $(GEN_CMDS__FLAG) \
 -Wl,-ldevice.cmd.genlibs \
 -Wl,-llibc.a \
@@ -26,9 +26,7 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
--include OLED/subdir_vars.mk
 -include subdir_rules.mk
--include OLED/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -125,29 +123,29 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-25C.out 
+HIGHPREQ.out 
 
 EXE_OUTPUTS__QUOTED += \
-"25C.out" 
+"HIGHPREQ.out" 
 
 
 # All Target
 all: $(OBJS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "25C.out"
+	@$(MAKE) --no-print-directory -Onone "HIGHPREQ.out"
 
 # Tool invocations
-25C.out: $(OBJS) $(GEN_CMDS)
+HIGHPREQ.out: $(OBJS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: Arm Linker'
-	"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/bin/tiarmclang.exe" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O0 -gdwarf-3 -Wl,-m"25C.map" -Wl,-i"C:/ti/mspm0_sdk_2_04_00_06/source" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/25C" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/25C/Debug/syscfg" -Wl,-i"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="25C_linkInfo.xml" -Wl,--rom_model -o "25C.out" $(ORDERED_OBJS)
+	"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/bin/tiarmclang.exe" @"device.opt"  -march=thumbv6m -mcpu=cortex-m0plus -mfloat-abi=soft -mlittle-endian -mthumb -O0 -gdwarf-3 -Wl,-m"HIGHPREQ.map" -Wl,-i"C:/ti/mspm0_sdk_2_04_00_06/source" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/HIGHPREQ" -Wl,-i"C:/Users/JamesHotten/Desktop/code/25C/HIGHPREQ/Debug/syscfg" -Wl,-i"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib" -Wl,--diag_wrap=off -Wl,--display_error_number -Wl,--warn_sections -Wl,--xml_link_info="HIGHPREQ_linkInfo.xml" -Wl,--rom_model -o "HIGHPREQ.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "empty.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "OLED\oled.o" 
-	-$(RM) "empty.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "OLED\oled.d" 
+	-$(RM) "oled.o" "timx_timer_mode_capture_duty_and_period.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" 
+	-$(RM) "oled.d" "timx_timer_mode_capture_duty_and_period.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

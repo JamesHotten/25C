@@ -6,6 +6,3 @@ CompileFlags:
 Diagnostics:
    Suppress: '*'
 
-InlayHints:
-   Enabled: No
-

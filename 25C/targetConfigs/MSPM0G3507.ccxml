@@ -14,11 +14,6 @@
             <property Type="choicelist" Value="2" id="SWD Mode Settings">
                 <choice Name="SWD Mode - Aux COM port is target TDO pin" value="nothing"/>
             </property>
-            <property id="Debug Probe Selection" Type="choicelist" Value="1">
-                <choice Name="Select by serial number" value="0">
-                    <property id="-- Enter the serial number" Type="stringfield" Value="MG350001"/>
-                </choice>
-            </property>
             <platform XML_version="1.2" id="platform_0">
                 <instance XML_version="1.2" desc="MSPM0G3507" href="devices/MSPM0G3507.xml" id="MSPM0G3507" xml="MSPM0G3507.xml" xmlpath="devices"/>
             </platform>

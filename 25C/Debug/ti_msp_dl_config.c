@@ -59,7 +59,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_ADC12_0_init();
     SYSCFG_DL_DMA_init();
-    SYSCFG_DL_SYSCTL_CLK_init();
     /* Ensure backup structures have no valid state */
 
 	gTIMER_0Backup.backupRdy 	= false;
@@ -124,31 +123,17 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_0_IOMUX_RX, GPIO_UART_0_IOMUX_RX_FUNC);
 
-    DL_GPIO_initDigitalOutput(GPIO_GRP_0_PIN_0_IOMUX);
-
-    DL_GPIO_initDigitalInputFeatures(GPIO_SWITCHES_USER_SWITCH_1_IOMUX,
-		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
-		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
-
-    DL_GPIO_initDigitalOutput(GPIO_LEDS_USER_LED_1_IOMUX);
-
     DL_GPIO_initDigitalOutput(GPIO_OLED_PIN_SCL_IOMUX);
 
     DL_GPIO_initDigitalOutput(GPIO_OLED_PIN_SDA_IOMUX);
 
-    DL_GPIO_clearPins(GPIOA, GPIO_GRP_0_PIN_0_PIN |
-		GPIO_OLED_PIN_SCL_PIN |
+    DL_GPIO_clearPins(GPIO_OLED_PORT, GPIO_OLED_PIN_SCL_PIN |
 		GPIO_OLED_PIN_SDA_PIN);
-    DL_GPIO_setPins(GPIOA, GPIO_LEDS_USER_LED_1_PIN);
-    DL_GPIO_enableOutput(GPIOA, GPIO_GRP_0_PIN_0_PIN |
-		GPIO_LEDS_USER_LED_1_PIN |
-		GPIO_OLED_PIN_SCL_PIN |
+    DL_GPIO_enableOutput(GPIO_OLED_PORT, GPIO_OLED_PIN_SCL_PIN |
 		GPIO_OLED_PIN_SDA_PIN);
-    DL_GPIO_setUpperPinsPolarity(GPIO_SWITCHES_PORT, DL_GPIO_PIN_21_EDGE_RISE_FALL);
-    DL_GPIO_clearInterruptStatus(GPIO_SWITCHES_PORT, GPIO_SWITCHES_USER_SWITCH_1_PIN);
-    DL_GPIO_enableInterrupt(GPIO_SWITCHES_PORT, GPIO_SWITCHES_USER_SWITCH_1_PIN);
 
 }
+
 
 
 SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
@@ -157,42 +142,30 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
 	//Low Power Mode is configured to be SLEEP0
     DL_SYSCTL_setBORThreshold(DL_SYSCTL_BOR_THRESHOLD_LEVEL_0);
 
-    DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
-    /* Set default configuration */
-    DL_SYSCTL_disableHFXT();
-    DL_SYSCTL_disableSYSPLL();
-    DL_SYSCTL_setULPCLKDivider(DL_SYSCTL_ULPCLK_DIV_1);
-    DL_SYSCTL_setMCLKDivider(DL_SYSCTL_MCLK_DIVIDER_DISABLE);
+    
+	DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
+	/* Set default configuration */
+	DL_SYSCTL_disableHFXT();
+	DL_SYSCTL_disableSYSPLL();
 
 }
-SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_CLK_init(void) {
-    while ((DL_SYSCTL_getClockStatus() & (DL_SYSCTL_CLK_STATUS_LFOSC_GOOD))
-	       != (DL_SYSCTL_CLK_STATUS_LFOSC_GOOD))
-	{
-		/* Ensure that clocks are in default POR configuration before initialization.
-		* Additionally once LFXT is enabled, the internal LFOSC is disabled, and cannot
-		* be re-enabled other than by executing a BOOTRST. */
-		;
-	}
-}
-
 
 
 
 /*
- * Timer clock configuration to be sourced by BUSCLK /  (16000000 Hz)
+ * Timer clock configuration to be sourced by BUSCLK /  (32000000 Hz)
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
- *   62500 Hz = 16000000 Hz / (2 * (255 + 1))
+ *   32000000 Hz = 32000000 Hz / (1 * (0 + 1))
  */
 static const DL_TimerG_ClockConfig gCAPTURE_0ClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
-    .divideRatio = DL_TIMER_CLOCK_DIVIDE_2,
-    .prescale = 255U
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
+    .prescale = 0U
 };
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * CAPTURE_0_INST_LOAD_VALUE = (1s * 62500 Hz) - 1
+ * CAPTURE_0_INST_LOAD_VALUE = (2ms * 32000000 Hz) - 1
  */
 static const DL_TimerG_CaptureCombinedConfig gCAPTURE_0CaptureConfig = {
     .captureMode    = DL_TIMER_CAPTURE_COMBINED_MODE_PULSE_WIDTH_AND_PERIOD,
@@ -218,24 +191,24 @@ SYSCONFIG_WEAK void SYSCFG_DL_CAPTURE_0_init(void) {
 
 
 /*
- * Timer clock configuration to be sourced by BUSCLK /  (32000000 Hz)
+ * Timer clock configuration to be sourced by BUSCLK /  (4000000 Hz)
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
- *   32000000 Hz = 32000000 Hz / (1 * (0 + 1))
+ *   20000 Hz = 4000000 Hz / (8 * (199 + 1))
  */
 static const DL_TimerA_ClockConfig gTIMER_0ClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
-    .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
-    .prescale    = 0U,
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
+    .prescale    = 199U,
 };
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * TIMER_0_INST_LOAD_VALUE = (1us * 32000000 Hz) - 1
+ * TIMER_0_INST_LOAD_VALUE = (1s * 20000 Hz) - 1
  */
 static const DL_TimerA_TimerConfig gTIMER_0TimerConfig = {
     .period     = TIMER_0_INST_LOAD_VALUE,
-    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
-    .startTimer = DL_TIMER_START,
+    .timerMode  = DL_TIMER_TIMER_MODE_ONE_SHOT,
+    .startTimer = DL_TIMER_STOP,
 };
 
 SYSCONFIG_WEAK void SYSCFG_DL_TIMER_0_init(void) {
@@ -245,6 +218,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_TIMER_0_init(void) {
 
     DL_TimerA_initTimerMode(TIMER_0_INST,
         (DL_TimerA_TimerConfig *) &gTIMER_0TimerConfig);
+    DL_TimerA_enableInterrupt(TIMER_0_INST , DL_TIMERA_INTERRUPT_ZERO_EVENT);
     DL_TimerA_enableClock(TIMER_0_INST);
 
 
@@ -269,7 +243,7 @@ static const DL_TimerA_ClockConfig gTIMER_1ClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * TIMER_1_INST_LOAD_VALUE = (20us * 32000000 Hz) - 1
+ * TIMER_1_INST_LOAD_VALUE = (1us * 32000000 Hz) - 1
  */
 static const DL_TimerA_TimerConfig gTIMER_1TimerConfig = {
     .period     = TIMER_1_INST_LOAD_VALUE,

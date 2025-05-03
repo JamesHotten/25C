@@ -73,6 +73,7 @@ extern "C" {
 #define POWER_STARTUP_DELAY                                                (16)
 
 
+
 #define CPUCLK_FREQ                                                     32000000
 
 
@@ -81,7 +82,7 @@ extern "C" {
 #define CAPTURE_0_INST                                                   (TIMG0)
 #define CAPTURE_0_INST_IRQHandler                               TIMG0_IRQHandler
 #define CAPTURE_0_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define CAPTURE_0_INST_LOAD_VALUE                                       (62499U)
+#define CAPTURE_0_INST_LOAD_VALUE                                       (63999U)
 /* GPIO defines for channel 0 */
 #define GPIO_CAPTURE_0_C0_PORT                                             GPIOB
 #define GPIO_CAPTURE_0_C0_PIN                                     DL_GPIO_PIN_10
@@ -96,13 +97,13 @@ extern "C" {
 #define TIMER_0_INST                                                     (TIMA1)
 #define TIMER_0_INST_IRQHandler                                 TIMA1_IRQHandler
 #define TIMER_0_INST_INT_IRQN                                   (TIMA1_INT_IRQn)
-#define TIMER_0_INST_LOAD_VALUE                                            (31U)
+#define TIMER_0_INST_LOAD_VALUE                                         (19999U)
 #define TIMER_0_INST_PUB_0_CH                                                (1)
 /* Defines for TIMER_1 */
 #define TIMER_1_INST                                                     (TIMA0)
 #define TIMER_1_INST_IRQHandler                                 TIMA0_IRQHandler
 #define TIMER_1_INST_INT_IRQN                                   (TIMA0_INT_IRQn)
-#define TIMER_1_INST_LOAD_VALUE                                           (639U)
+#define TIMER_1_INST_LOAD_VALUE                                            (31U)
 #define TIMER_1_INST_PUB_0_CH                                                (2)
 
 
@@ -135,7 +136,7 @@ extern "C" {
 #define ADC12_0_ADCMEM_0                                      DL_ADC12_MEM_IDX_0
 #define ADC12_0_ADCMEM_0_REF                     DL_ADC12_REFERENCE_VOLTAGE_VDDA
 #define ADC12_0_ADCMEM_0_REF_VOLTAGE_V                                       3.3
-#define ADC12_0_INST_SUB_CH                                                  (1)
+#define ADC12_0_INST_SUB_CH                                                  (2)
 #define GPIO_ADC12_0_C0_PORT                                               GPIOA
 #define GPIO_ADC12_0_C0_PIN                                       DL_GPIO_PIN_27
 
@@ -146,28 +147,6 @@ extern "C" {
 #define ADC12_0_INST_DMA_TRIGGER                      (DMA_ADC0_EVT_GEN_BD_TRIG)
 
 
-/* Port definition for Pin Group GPIO_GRP_0 */
-#define GPIO_GRP_0_PORT                                                  (GPIOA)
-
-/* Defines for PIN_0: GPIOA.14 with pinCMx 36 on package pin 7 */
-#define GPIO_GRP_0_PIN_0_PIN                                    (DL_GPIO_PIN_14)
-#define GPIO_GRP_0_PIN_0_IOMUX                                   (IOMUX_PINCM36)
-/* Port definition for Pin Group GPIO_SWITCHES */
-#define GPIO_SWITCHES_PORT                                               (GPIOB)
-
-/* Defines for USER_SWITCH_1: GPIOB.21 with pinCMx 49 on package pin 20 */
-// pins affected by this interrupt request:["USER_SWITCH_1"]
-#define GPIO_SWITCHES_INT_IRQN                                  (GPIOB_INT_IRQn)
-#define GPIO_SWITCHES_INT_IIDX                  (DL_INTERRUPT_GROUP1_IIDX_GPIOB)
-#define GPIO_SWITCHES_USER_SWITCH_1_IIDX                    (DL_GPIO_IIDX_DIO21)
-#define GPIO_SWITCHES_USER_SWITCH_1_PIN                         (DL_GPIO_PIN_21)
-#define GPIO_SWITCHES_USER_SWITCH_1_IOMUX                        (IOMUX_PINCM49)
-/* Port definition for Pin Group GPIO_LEDS */
-#define GPIO_LEDS_PORT                                                   (GPIOA)
-
-/* Defines for USER_LED_1: GPIOA.0 with pinCMx 1 on package pin 33 */
-#define GPIO_LEDS_USER_LED_1_PIN                                 (DL_GPIO_PIN_0)
-#define GPIO_LEDS_USER_LED_1_IOMUX                                (IOMUX_PINCM1)
 /* Port definition for Pin Group GPIO_OLED */
 #define GPIO_OLED_PORT                                                   (GPIOA)
 
@@ -184,7 +163,6 @@ void SYSCFG_DL_init(void);
 void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
-void SYSCFG_DL_SYSCTL_CLK_init(void);
 void SYSCFG_DL_CAPTURE_0_init(void);
 void SYSCFG_DL_TIMER_0_init(void);
 void SYSCFG_DL_TIMER_1_init(void);

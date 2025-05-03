@@ -1,14 +1,18 @@
+
 ## Example Summary
 
-Empty project using DriverLib.
-This example shows a basic empty project using DriverLib with just main file
-and SysConfig initialization.
+The following example configures TimerG0 in combined capture mode (configure to
+measure a PWM signal's period and duty cycle). TimerG7 is used to generate a the
+PWM signal. This examples configures timers in down counting mode.
 
 ## Peripherals & Pin Assignments
 
 | Peripheral | Pin | Function |
 | --- | --- | --- |
 | SYSCTL |  |  |
+| TIMG7 | PB15 | Capture/Compare Pin 0 |
+| TIMG0 | PA12 | Capture/Compare Pin 0 |
+| EVENT |  |  |
 | DEBUGSS | PA20 | Debug Clock |
 | DEBUGSS | PA19 | Debug Data In Out |
 
@@ -18,6 +22,8 @@ Visit [LP_MSPM0G3507](https://www.ti.com/tool/LP-MSPM0G3507) for LaunchPad infor
 
 | Pin | Peripheral | Function | LaunchPad Pin | LaunchPad Settings |
 | --- | --- | --- | --- | --- |
+| PB15 | TIMG7 | CCP0 | J2_17 | N/A |
+| PA12 | TIMG0 | CCP0 | J4_32/J26_1 | <ul><li>PA12 can be connected to CAN/LIN connector in addition to boosterpack connector:<br><ul><li>To use on J26 CAN/LIN connector:<br>  `R64` is populated by default and connects pin to `J26_1`</ul></ul> |
 | PA20 | DEBUGSS | SWCLK | N/A | <ul><li>PA20 is used by SWD during debugging<br><ul><li>`J101 15:16 ON` Connect to XDS-110 SWCLK while debugging<br><li>`J101 15:16 OFF` Disconnect from XDS-110 SWCLK if using pin in application</ul></ul> |
 | PA19 | DEBUGSS | SWDIO | N/A | <ul><li>PA19 is used by SWD during debugging<br><ul><li>`J101 13:14 ON` Connect to XDS-110 SWDIO while debugging<br><li>`J101 13:14 OFF` Disconnect from XDS-110 SWDIO if using pin in application</ul></ul> |
 
@@ -37,5 +43,12 @@ For more information about jumper configuration to achieve low-power using the
 MSPM0 LaunchPad, please visit the [LP-MSPM0G3507 User's Guide](https://www.ti.com/lit/slau873).
 
 ## Example Usage
-
+Connect a jumper cable between PA12 (GPIO_TIMER_CAPTURE_C0_PIN) and PB15
+(GPIO_PWM_C0_PIN).
 Compile, load and run the example.
+The application will capture two full periods before hitting a SW breakpoint.
+This ensures that the timers are fully synchronized (please refer the TRM for
+additional details). At the breakpoint, the user can inspect the values of
+pwmPeriod and pwmDuty.
+The value of pwmDuty should be set to ~50.
+The value of pwmPeriod should be set to ~1000.
