@@ -163,6 +163,12 @@ extern "C" {
 #define GPIO_SWITCHES_USER_SWITCH_1_IIDX                    (DL_GPIO_IIDX_DIO21)
 #define GPIO_SWITCHES_USER_SWITCH_1_PIN                         (DL_GPIO_PIN_21)
 #define GPIO_SWITCHES_USER_SWITCH_1_IOMUX                        (IOMUX_PINCM49)
+/* Port definition for Pin Group GPIO_RELAY */
+#define GPIO_RELAY_PORT                                                  (GPIOB)
+
+/* Defines for USER_RELAY_1: GPIOB.15 with pinCMx 32 on package pin 3 */
+#define GPIO_RELAY_USER_RELAY_1_PIN                             (DL_GPIO_PIN_15)
+#define GPIO_RELAY_USER_RELAY_1_IOMUX                            (IOMUX_PINCM32)
 /* Port definition for Pin Group GPIO_OLED */
 #define GPIO_OLED_PORT                                                   (GPIOA)
 
