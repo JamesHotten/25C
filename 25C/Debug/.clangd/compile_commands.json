@@ -1,17 +1,17 @@
 [
    {
-      "directory" : "C:/Users/JamesHotten/Desktop/25C (1)/Debug",
-      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/25C (1)/OLED\" -I\"C:/Users/JamesHotten/Desktop/25C (1)\" -I\"C:/Users/JamesHotten/Desktop/25C (1)/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
-      "file"      : "C:/Users/JamesHotten/Desktop/25C (1)/Debug/ti_msp_dl_config.c"
+      "directory" : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug",
+      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C/OLED\" -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C\" -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
+      "file"      : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug/ti_msp_dl_config.c"
    },
    {
-      "directory" : "C:/Users/JamesHotten/Desktop/25C (1)/Debug",
-      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/25C (1)/OLED\" -I\"C:/Users/JamesHotten/Desktop/25C (1)\" -I\"C:/Users/JamesHotten/Desktop/25C (1)/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
-      "file"      : "C:/Users/JamesHotten/Desktop/25C (1)/oled.c"
+      "directory" : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug",
+      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C/OLED\" -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C\" -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
+      "file"      : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/oled.c"
    },
    {
-      "directory" : "C:/Users/JamesHotten/Desktop/25C (1)/Debug",
-      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/25C (1)\" -I\"C:/Users/JamesHotten/Desktop/25C (1)/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
-      "file"      : "C:/Users/JamesHotten/Desktop/25C (1)/timx_timer_mode_capture_duty_and_period.c"
+      "directory" : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug",
+      "command"   : "clang++ -D__MSPM0G3507__ -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C\" -I\"C:/Users/JamesHotten/Desktop/code/TICCS/25C/Debug\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include\" -I\"C:/ti/mspm0_sdk_2_04_00_06/source\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/armv7em-ti-none-eabihf/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c++/v1\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/lib/clang/18/include\" -isystem\"C:/ti/ccs2010/ccs/tools/compiler/ti-cgt-armllvm_4.0.2.LTS/include/c\" -xc",
+      "file"      : "C:/Users/JamesHotten/Desktop/code/TICCS/25C/timx_timer_mode_capture_duty_and_period.c"
    }
 ]

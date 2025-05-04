@@ -80,7 +80,8 @@
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_vref.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_wwdt.h \
  C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_interrupt.h \
- C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_systick.h
+ C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_systick.h \
+ ../waveform.h
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_const_structs.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/DSP/Include/arm_math.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/third_party/CMSIS/Core/Include/cmsis_compiler.h:
@@ -161,3 +162,4 @@ C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_vref.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/dl_wwdt.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_interrupt.h:
 C:/ti/mspm0_sdk_2_04_00_06/source/ti/driverlib/m0p/dl_systick.h:
+../waveform.h:

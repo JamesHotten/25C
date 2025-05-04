@@ -33,6 +33,7 @@
 #include "arm_math.h"
 #include "oled.h"
 #include "ti_msp_dl_config.h"
+#include "waveform.h"
 #define ADC_SAMPLE_SIZE 1024
 // 变量定义
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +41,11 @@
 volatile uint32_t count = 0;
 volatile float freq_pin;
 // 蓝牙模块定义变量，引脚定义RX对应PA11，TX对应PA10
-#define USART_TX_LEN 7
-uint8_t USART_TX_BUF[USART_TX_LEN];
+
+#define USART_TX_LEN_SRC 15 // 发送蓝牙数据包
+
+uint8_t USART_TX_BUF_SRC[USART_TX_LEN_SRC];
+
 uint32_t adc_fs = 4e5;
 float avg_max = 0;
 float avg_min = 3;
@@ -112,8 +116,8 @@ void findbase(void) {
   //               &FFT_OUTPUT_MAX_index);
 
   //   base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
-  if (freq_pin < 50) {
-    multipler = 2;
+  if (freq_pin <= 50) {
+    multipler = 40;
   } else if (freq_pin < 5000) {
     multipler = 10;
   } else {
@@ -133,7 +137,6 @@ void findV(void) {
   Vmax[0] = Vmax[1] = Vmax[2] = Vmax[3] = Vmax[4] = -1;
   // 初始化最小值数组为最大值
   Vmin[0] = Vmin[1] = Vmin[2] = Vmin[3] = Vmin[4] = 0xFFFF;
-
   for (int i = 0; i < ADC_SAMPLE_SIZE; i++) {
     uint16_t current = gADCSamples[i];
 
@@ -320,21 +323,43 @@ void OLEDSHOW() {
 
 // 蓝牙模块发送数据定义
 // RX PA11   TX PA10
-void BTSent() {
-  USART_TX_BUF[0] = 0xA5;                    // 数据包头
-  *((float *)(&USART_TX_BUF[1])) = freq_pin; // float值
-  uint8_t checksum = 0;
-  for (uint8_t i = 1; i < USART_TX_LEN - 2;
-       i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
-    checksum += USART_TX_BUF[i];
-    USART_TX_BUF[USART_TX_LEN - 2] = checksum; // 校验位
-    USART_TX_BUF[USART_TX_LEN - 1] = 0x5A;     // 包尾字节
-    sendBluetoothData(USART_TX_BUF, USART_TX_LEN);
+
+void BT_send_Src() {
+  // 初始化数据包
+  uint16_t i;
+  for (i = 0; i < 100; i++) {
+    USART_TX_BUF_SRC[0] = 0xA5;
+    float wave = 0.0f;
+    if (waveform == 1)
+      wave = sin_table[i] * vppadc / 4096;
+    else if (waveform == 2)
+      wave = square_table[i] * vppadc / 4096;
+    else if (waveform == 3)
+      wave = triangle_table[i] * vppadc / 4096;
+    memcpy(&USART_TX_BUF_SRC[1], &wave, sizeof(wave));
+    *((float *)(&USART_TX_BUF_SRC[5])) = freq_pin;
+    *((float *)(&USART_TX_BUF_SRC[9])) = vppadc;
+    // 计算校验和
+    uint8_t checksum = 0;
+    for (int i = 1; i < USART_TX_LEN_SRC - 2;
+         i++) { // 从第二个字节到倒数第二个字节（不包括包尾）
+      checksum += USART_TX_BUF_SRC[i];
+    }
+    USART_TX_BUF_SRC[USART_TX_LEN_SRC - 2] = checksum; // 校验位
+
+    // 添加包尾
+    USART_TX_BUF_SRC[USART_TX_LEN_SRC - 1] = 0x5A; // 包尾字节
+    while (DL_UART_isBusy(UART_0_INST))
+      ;
+    // 发送数据包到蓝牙
+    sendBluetoothData(USART_TX_BUF_SRC, USART_TX_LEN_SRC);
   }
+  return;
 }
 
 int main(void) {
   SYSCFG_DL_init();
+
   OLED_Init();
   OLED_Clear();
 
@@ -361,13 +386,11 @@ int main(void) {
   while (1) {
     // 为了防止ADC和测频法互相干扰，必须要先加入延时
     delay_cycles(32e6);
-
     findbase();
-
     findV();
-
     OLEDSHOW();
-    BTSent();
+
+    BT_send_Src();
   }
   return 0;
 }
@@ -436,3 +459,5 @@ void GROUP1_IRQHandler(void) {
     break;
   }
 }
+
+////////////////////////////////////////////////
