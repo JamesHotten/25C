@@ -45,7 +45,7 @@ volatile float freq_pin;
 // 蓝牙模块定义变量，引脚定义RX对应PA11，TX对应PA10
 #define USART_TX_LEN_SRC 15 // 发送蓝牙数据包
 uint8_t USART_TX_BUF_SRC[USART_TX_LEN_SRC];
-
+// uint16_t audio[29 * 1024] = {0};
 //////////////////////////////////////////////
 float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
 float FFT_OUTPUT[ADC_SAMPLE_SIZE];
@@ -54,7 +54,7 @@ uint32_t FFT_OUTPUT_MAX_index = 0;
 uint16_t waveform1 = 0;
 uint16_t waveform2 = 0;
 uint16_t waveform = 0;
-
+uint16_t audio[7 * 1024];
 //////////////////////////////////////////////
 uint32_t adc_fs = 4e5;
 float avg_max = 0;
@@ -330,7 +330,12 @@ void OLEDSHOW() {
   }
   if (waveform == 2)
     vppadc = vpppower;
-
+  vppadc *= 1.018;
+  if (jdqState) {
+    vppadc /= 9;
+  } else {
+    vppadc /= 3;
+  }
   float vpp = vppadc * 1e3;
   int len = getlen(vpp);
 
@@ -446,6 +451,11 @@ int main(void) {
 
     // 为了防止ADC和测频法互相干扰，必须要先加入延时
     delay_cycles(32e6);
+    for (int i = 0; i < 7; i++) {
+      StartAdc(2e3);
+      memcpy(&audio[i * 1024], &gADCSamples[0], 1024 * sizeof(gADCSamples[0]));
+    }
+    __BKPT();
     findbase();
     findV();
     // if (vppadc <= 0.6) {
