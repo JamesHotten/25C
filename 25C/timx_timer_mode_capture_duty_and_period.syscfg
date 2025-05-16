@@ -17,6 +17,7 @@ const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1         = GPIO.addInstance();
 const GPIO2         = GPIO.addInstance();
 const GPIO3         = GPIO.addInstance();
+const GPIO4         = GPIO.addInstance();
 const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
 const TIMER2        = TIMER.addInstance();
@@ -83,6 +84,12 @@ GPIO3.associatedPins[0].internalResistor = "PULL_UP";
 GPIO3.associatedPins[0].interruptEn      = true;
 GPIO3.associatedPins[0].polarity         = "RISE_FALL";
 
+GPIO4.$name                              = "GPIO_RELAY";
+GPIO4.associatedPins[0].internalResistor = "PULL_UP";
+GPIO4.associatedPins[0].$name            = "USER_RELAY_1";
+GPIO4.associatedPins[0].assignedPort     = "PORTB";
+GPIO4.associatedPins[0].assignedPin      = "15";
+
 const SYSCTL                 = scripting.addModule("/ti/driverlib/SYSCTL", {}, false);
 SYSCTL.forceDefaultClkConfig = true;
 SYSCTL.clockTreeEn           = true;
@@ -127,4 +134,5 @@ GPIO1.associatedPins[0].pin.$suggestSolution   = "PA12";
 GPIO1.associatedPins[1].pin.$suggestSolution   = "PA13";
 GPIO2.associatedPins[0].pin.$suggestSolution   = "PA0";
 GPIO3.associatedPins[0].pin.$suggestSolution   = "PB21";
+GPIO4.associatedPins[0].pin.$suggestSolution   = "PB15";
 UART1.peripheral.$suggestSolution              = "UART0";

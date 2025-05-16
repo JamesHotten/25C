@@ -35,35 +35,47 @@
 #include "ti_msp_dl_config.h"
 #include "waveform.h"
 #define ADC_SAMPLE_SIZE 1024
+#define maxn(a, b) (a > b ? a : b)
+#define minn(a, b) (a < b ? a : b)
 // 变量定义
 ///////////////////////////////////////////////////////////////////////
 // 测频法模块定义变量
 volatile uint32_t count = 0;
 volatile float freq_pin;
 // 蓝牙模块定义变量，引脚定义RX对应PA11，TX对应PA10
-
 #define USART_TX_LEN_SRC 15 // 发送蓝牙数据包
-
 uint8_t USART_TX_BUF_SRC[USART_TX_LEN_SRC];
-
+// uint16_t audio[29 * 1024] = {0};
+//////////////////////////////////////////////
+float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
+float FFT_OUTPUT[ADC_SAMPLE_SIZE];
+float FFT_OUTPUT_MAX = 0;
+uint32_t FFT_OUTPUT_MAX_index = 0;
+uint16_t waveform1 = 0;
+uint16_t waveform2 = 0;
+uint16_t waveform = 0;
+uint16_t audio[7 * 1024];
+//////////////////////////////////////////////
 uint32_t adc_fs = 4e5;
 float avg_max = 0;
 float avg_min = 3;
 // ADC采样
 // PA27引脚
 float base_frequency = 0;
-float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
-float FFT_OUTPUT[ADC_SAMPLE_SIZE];
+// float FFT_INPUT[ADC_SAMPLE_SIZE * 2];
+// float FFT_OUTPUT[ADC_SAMPLE_SIZE];
 uint16_t waveform;
-float FFT_OUTPUT_MAX = 0;
-uint32_t FFT_OUTPUT_MAX_index = 0;
+// float FFT_OUTPUT_MAX = 0;
+// uint32_t FFT_OUTPUT_MAX_index = 0;
 uint16_t gADCSamples[ADC_SAMPLE_SIZE];
 volatile bool gCheckADC;
 
 uint32_t point = 0;
-uint8_t multipler = 1;
+uint32_t multipler = 1;
 float_t vppadc = 0;
 volatile uint8_t ledState = 0;
+volatile uint8_t jdqState = 0;
+float vpppower;
 ////////////////////////////////////////////////////////////////////////
 
 // 函数封装
@@ -98,37 +110,20 @@ void StartAdc(int freq) {
 }
 
 void findbase(void) {
-  // adc_fs = 400e3;
-  // StartAdc(adc_fs);
-  // StartAdc(adc_fs);
-
-  //   uint16_t i;
-  //   for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
-  //     FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
-  //     FFT_INPUT[i * 2 + 1] = 0;
-  //   }
-
-  //   arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
-  //   arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
-
-  //   FFT_OUTPUT[0] = 0;
-  //   arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE, &FFT_OUTPUT_MAX,
-  //               &FFT_OUTPUT_MAX_index);
-
-  //   base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
-  if (freq_pin <= 50) {
-    multipler = 40;
+  if (freq_pin < 10) {
+    multipler = 1020;
+  } else if (freq_pin < 50) {
+    multipler = 120;
   } else if (freq_pin < 5000) {
-    multipler = 10;
+    multipler = 24;
   } else {
-    multipler = 10;
+    multipler = 12;
   }
   adc_fs = freq_pin * multipler;
 }
 
 /////寻找V
 void findV(void) {
-  StartAdc(adc_fs);
   StartAdc(adc_fs);
   // __BKPT();
   int Vmax[5], Vmin[5];
@@ -137,6 +132,7 @@ void findV(void) {
   Vmax[0] = Vmax[1] = Vmax[2] = Vmax[3] = Vmax[4] = -1;
   // 初始化最小值数组为最大值
   Vmin[0] = Vmin[1] = Vmin[2] = Vmin[3] = Vmin[4] = 0xFFFF;
+
   for (int i = 0; i < ADC_SAMPLE_SIZE; i++) {
     uint16_t current = gADCSamples[i];
 
@@ -195,46 +191,107 @@ void findV(void) {
 
 ////
 
-int switchwave() {
+int switchwave2() {
   // 准确判断波形类别
-  waveform = 0;
+  waveform2 = 0;
   float_t line = 0;
 
   point = 0;
   int t = 0;
   float harm;
   line = (avg_max - avg_min) * 0.25 + (avg_max + avg_min) * 0.5;
-  for (t = 10; t < 12 * multipler + 10; t++) {
+  for (t = 10; t < 1020 - 12 + 10; t++) {
     if (gADCSamples[t] > line) {
       point++;
     }
   }
-  if (point < 3 * multipler + 5) {
-    waveform = 3; // 三角波
-  } else if (point < 4 * multipler + 5) {
-    waveform = 1; // 正弦波
-  } else if (point < 6 * multipler + 25) {
-    waveform = 2; // 方波
+  if (point < 3.5 * 1020 / 12 - 3) {
+    waveform2 = 3; // 三角波
+  } else if (point < 4.5 * 1020 / 12 - 4) {
+    waveform2 = 1; // 正弦波
+  } else if (point < 6.5 * 1020 / 12 - 12) {
+    waveform2 = 2; // 方波
   }
-  return waveform;
+  return waveform2;
 }
 
 // 法一：利用FFT结果去计算
-// int switchwave() {
-//   uint16_t waveform = 0;
-//   float harm;
-//   harm = maxn(maxn(FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index],
-//                    FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 1]),
-//               FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 2]);
-//   float k = FFT_OUTPUT[FFT_OUTPUT_MAX_index] / harm; // 需要加一个for循环
-//   if (k < 9 && k > 1)
-//     waveform = 2; // 方波
-//   if (k < 20 && k > 9)
-//     waveform = 3; // 三角波
-//   if (k > 20)
-//     waveform = 1; // 正弦波
-//   return waveform;
-// }
+int switchwave1() {
+  // StartAdc(adc_fs);
+  uint16_t i;
+  for (i = 0; i < ADC_SAMPLE_SIZE; i++) {
+    FFT_INPUT[i * 2] = (float)(gADCSamples[i]);
+    FFT_INPUT[i * 2 + 1] = 0;
+  }
+  arm_cfft_f32(&arm_cfft_sR_f32_len1024, FFT_INPUT, 0, 1);
+  arm_cmplx_mag_f32(FFT_INPUT, FFT_OUTPUT, ADC_SAMPLE_SIZE);
+
+  FFT_OUTPUT[0] = 0;
+  arm_max_f32(FFT_OUTPUT, ADC_SAMPLE_SIZE, &FFT_OUTPUT_MAX,
+              &FFT_OUTPUT_MAX_index);
+
+  base_frequency = adc_fs * FFT_OUTPUT_MAX_index / ADC_SAMPLE_SIZE;
+  float harm;
+  harm = maxn(maxn(FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index],
+                   FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 1]),
+              FFT_OUTPUT[3 * FFT_OUTPUT_MAX_index + 2]);
+  float k = FFT_OUTPUT[FFT_OUTPUT_MAX_index] / harm; // 需要加一个for循环
+  if (k < 6 && k > 1)
+    waveform1 = 2; // 方波
+  if (k < 20 && k > 6)
+    waveform1 = 3; // 三角波
+  if (k > 20)
+    waveform1 = 1; // 正弦波
+
+  return waveform1;
+}
+
+int switchwave() {
+  switchwave1();
+  switchwave2();
+  if (freq_pin < 10) {
+    waveform = waveform1;
+  } else {
+    waveform = waveform2;
+  }
+  return waveform;
+}
+void findvpp() {
+  // StartAdc(adc_fs);
+  float ans = -1;
+  float e = 0.0;
+  float power = 0.0;
+  point = adc_fs / freq_pin + 1;
+  uint16_t i;
+  float vdc = 0;
+  float sum = 0;
+  for (i = 0; i < 1024; i++)
+    sum = sum + gADCSamples[i] * 3.3 / 4096;
+  vdc = sum / 1024;
+
+  for (i = 0; i < 1024; i++) {
+    e = e + ((powf((gADCSamples[i] * 3.3 / 4096 - vdc), 2) +
+              powf((gADCSamples[i + 1] * 3.3 / 4096 - vdc), 2)) /
+             adc_fs / 2);
+  }
+
+  power = e * freq_pin / (1024 / point);
+  int waveform = switchwave();
+  switch (waveform) {
+  case 1: // 正弦波
+    ans = 2 * sqrtf(2 * power);
+    break;
+  case 2: // 方波
+    ans = 2 * sqrtf(power);
+    break;
+  case 3: // 三角波
+    ans = 2 * sqrtf(3 * power);
+    break;
+  default:
+    break;
+  }
+  vpppower = ans;
+}
 
 int getlen(float val) {
   int reg = val;
@@ -259,7 +316,8 @@ void getdec(float val, int bit) {
 // OLED显示模块部分
 // SCL接PA12，SDA接PA13
 void OLEDSHOW() {
-  int waveform = switchwave();
+  switchwave();
+  OLED_Clear();
   OLED_ShowString(0, 0, (uint8_t *)"wave:", 16);
   if (waveform == 1) {
     OLED_ShowString(50, 0, (uint8_t *)"sin", 16);
@@ -270,9 +328,17 @@ void OLEDSHOW() {
   } else {
     { OLED_ShowString(50, 0, (uint8_t *)"wait", 16); }
   }
-
+  if (waveform == 2)
+    vppadc = vpppower;
+  vppadc *= 1.018;
+  if (jdqState) {
+    vppadc /= 9;
+  } else {
+    vppadc /= 3;
+  }
   float vpp = vppadc * 1e3;
   int len = getlen(vpp);
+
   OLED_ShowString(0, 4, (uint8_t *)"vpp:", 16);
   OLED_ShowNum(50, 4, (int)(vpp), len, 16);
   getdec(vpp, 2);
@@ -317,13 +383,12 @@ void OLEDSHOW() {
     OLED_ShowString(50 + (len + 4) * 8, 2, (uint8_t *)"kHz", 16);
   }
 
-  delay_cycles(32e6); // 每秒刷新一次
-  OLED_Clear();
+  // delay_cycles(2 * 32e6); // 每秒刷新一次
+  // OLED_Clear();
 }
 
 // 蓝牙模块发送数据定义
 // RX PA11   TX PA10
-
 void BT_send_Src() {
   // 初始化数据包
   uint16_t i;
@@ -359,7 +424,6 @@ void BT_send_Src() {
 
 int main(void) {
   SYSCFG_DL_init();
-
   OLED_Init();
   OLED_Clear();
 
@@ -384,12 +448,57 @@ int main(void) {
   // OLED初始化
 
   while (1) {
+
     // 为了防止ADC和测频法互相干扰，必须要先加入延时
     delay_cycles(32e6);
+    for (int i = 0; i < 7; i++) {
+      StartAdc(2e3);
+      memcpy(&audio[i * 1024], &gADCSamples[0], 1024 * sizeof(gADCSamples[0]));
+    }
+    __BKPT();
     findbase();
     findV();
-    OLEDSHOW();
+    // if (vppadc <= 0.6) {
+    //   DL_GPIO_setPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    // }
+    // /* Otherwise, turn the LED on */
+    // else {
+    //   DL_GPIO_clearPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    // }
 
+    /////////////////////////////////////////////////////////////////
+
+    // if (jdqState == 3 && vppadc < 0.6) {
+    //   DL_GPIO_setPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    //   jdqState = 9;
+    // }
+    // /* Otherwise, turn the LED on */
+    // if (jdqState == 9 && vppadc > 1.8) {
+    //   DL_GPIO_clearPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    //   jdqState = 3;
+    // } else {
+    //   DL_GPIO_clearPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    // }
+
+    /////////////////////////////////////////////////////////////////////z只能乘9
+    if (vppadc <= 0.588 && jdqState == 0) {
+      jdqState = 1;
+    }
+    if (vppadc > 1.789 && jdqState == 1) {
+      jdqState = 0;
+    }
+    if (jdqState) {
+      DL_GPIO_setPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    }
+    /* Otherwise, turn the LED on */
+    else {
+      DL_GPIO_clearPins(GPIO_RELAY_PORT, GPIO_RELAY_USER_RELAY_1_PIN);
+    }
+
+    //////////////////////////////////////////////////////////////////
+    findvpp();
+
+    OLEDSHOW();
     BT_send_Src();
   }
   return 0;
@@ -459,5 +568,3 @@ void GROUP1_IRQHandler(void) {
     break;
   }
 }
-
-////////////////////////////////////////////////
